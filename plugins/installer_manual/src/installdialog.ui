@@ -33,7 +33,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,2">
         <item>
          <widget class="QLabel" name="label">
           <property name="minimumSize">
@@ -48,12 +48,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="editName">
-          <property name="toolTip">
-           <string>Pick a name for the mod</string>
-          </property>
-          <property name="whatsThis">
-           <string>Pick a name for the mod. This is also used as a directory name, so please don't use characters that are illegal in file names.</string>
+         <widget class="QComboBox" name="nameCombo">
+          <property name="editable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

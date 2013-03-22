@@ -23,13 +23,14 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include "mytree.h"
 #include "archivetree.h"
 #include "tutorabledialog.h"
+#include <guessedvalue.h>
+#include <directorytree.h>
 #include <QDialog>
 #include <QUuid>
 #include <QTreeWidgetItem>
 #include <QProgressDialog>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include <directorytree.h>
 
 
 namespace Ui {
@@ -41,7 +42,7 @@ namespace Ui {
  * a dialog presented to manually define how a mod is to be installed. It provides
  * a tree view of the file contents that can modified directly
  **/
-class InstallDialog : public TutorableDialog
+class InstallDialog : public MOBase::TutorableDialog
 {
     Q_OBJECT
 
@@ -49,11 +50,12 @@ public:
   /**
    * @brief constructor
    *
-   * @param tree tree structure describing the vanilla archive structure. The InstallDialog does NOT take custody of this pointer!
+   * @param tree tree structure describing the vanilla archive structure. The InstallDialog
+   *        does NOT take custody of this pointer but it has to remain valid until after the call to getModifiedTree
    * @param modName name of the mod. The name can be modified through the dialog
    * @param parent parent widget
    **/
-  explicit InstallDialog(DirectoryTree *tree, const QString &modName, QWidget *parent = 0);
+  explicit InstallDialog(MOBase::DirectoryTree *tree, const MOBase::GuessedValue<QString> &modName, QWidget *parent = 0);
   ~InstallDialog();
 
   /**
@@ -68,7 +70,7 @@ public:
    *
    * @return modified data structure. This is a NEW datatree object for which the caller takes custody
    **/
-  DirectoryTree *getDataTree() const;
+  MOBase::DirectoryTree *getModifiedTree() const;
 
 signals:
 
@@ -86,11 +88,11 @@ private:
 
   void updateCheckState(QTreeWidgetItem *item);
 
-  void addDataToTree(DirectoryTree::Node *node, QTreeWidgetItem *treeItem);
+  void addDataToTree(MOBase::DirectoryTree::Node *node, QTreeWidgetItem *treeItem);
 
-  void mapDataNode(DirectoryTree::Node *node, QTreeWidgetItem *baseItem) const;
+  void mapDataNode(MOBase::DirectoryTree::Node *node, QTreeWidgetItem *baseItem) const;
 
-  static QString getFullPath(const DirectoryTree::Node *node);
+  static QString getFullPath(const MOBase::DirectoryTree::Node *node);
 
 private slots:
 
@@ -110,7 +112,7 @@ private slots:
 private:
   Ui::InstallDialog *ui;
 
-  DirectoryTree *m_DataTree;
+  MOBase::DirectoryTree *m_DataTree;
 
   ArchiveTree *m_Tree;
   QLabel *m_ProblemLabel;
