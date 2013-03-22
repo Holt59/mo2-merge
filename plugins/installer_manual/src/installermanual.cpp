@@ -29,6 +29,9 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include <Shellapi.h>
 
 
+using namespace MOBase;
+
+
 InstallerManual::InstallerManual()
 {
 }
@@ -105,16 +108,16 @@ void InstallerManual::openFile(const QString &fileName)
 }
 
 
-IPluginInstaller::EInstallResult InstallerManual::install(QString &modName, DirectoryTree &tree)
+IPluginInstaller::EInstallResult InstallerManual::install(GuessedValue<QString> &modName, DirectoryTree &tree)
 {
   qDebug("offering installation dialog");
   InstallDialog dialog(&tree, modName, parentWidget());
   connect(&dialog, SIGNAL(openFile(QString)), this, SLOT(openFile(QString)));
   if (dialog.exec() == QDialog::Accepted) {
-    modName = dialog.getModName();
+    modName.update(dialog.getModName(), GUESS_USER);
 
-    // probably more complicated than necessary
-    DirectoryTree *newTree = dialog.getDataTree();
+    // TODO probably more complicated than necessary
+    DirectoryTree *newTree = dialog.getModifiedTree();
     tree = *newTree;
     delete newTree;
     return IPluginInstaller::RESULT_SUCCESS;

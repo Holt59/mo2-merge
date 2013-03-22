@@ -29,15 +29,21 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 
 
-InstallDialog::InstallDialog(DirectoryTree *tree, const QString &modName, QWidget *parent)
+using namespace MOBase;
+
+
+InstallDialog::InstallDialog(DirectoryTree *tree, const GuessedValue<QString> &modName, QWidget *parent)
   : TutorableDialog("InstallDialog", parent), ui(new Ui::InstallDialog),
     m_DataTree(tree), m_TreeRoot(NULL), m_DataRoot(NULL), m_TreeSelection(NULL),
     m_Updating(false)
 {
   ui->setupUi(this);
 
-  QLineEdit *editName = findChild<QLineEdit*>("editName");
-  editName->setText(modName);
+  for (auto iter = modName.variants().begin(); iter != modName.variants().end(); ++iter) {
+    ui->nameCombo->addItem(*iter);
+  }
+
+  ui->nameCombo->setCurrentIndex(ui->nameCombo->findText(modName));
 
   m_Tree = findChild<ArchiveTree*>("treeContent");
 
@@ -56,8 +62,7 @@ InstallDialog::~InstallDialog()
 
 QString InstallDialog::getModName() const
 {
-  QLineEdit *editName = findChild<QLineEdit*>("editName");
-  return editName->text();
+  return ui->nameCombo->currentText();
 }
 
 
@@ -80,7 +85,7 @@ void InstallDialog::mapDataNode(DirectoryTree::Node *node, QTreeWidgetItem *base
 }
 
 
-DirectoryTree *InstallDialog::getDataTree() const
+DirectoryTree *InstallDialog::getModifiedTree() const
 {
   DirectoryTree *base = new DirectoryTree;
 
@@ -291,8 +296,10 @@ void InstallDialog::treeChanged()
 void InstallDialog::on_okButton_clicked()
 {
   if (!testForProblem()) {
-    if (QMessageBox::question(this, tr("Continue?"), tr("This mod was probably NOT set up correctly, most likely it will NOT work. Really continue?"),
-                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+    if (QMessageBox::question(this, tr("Continue?"),
+                              tr("This mod was probably NOT set up correctly, most likely it will NOT work. "
+                                 "You should first correct the directory layout using the content-tree."),
+                              QMessageBox::Ignore | QMessageBox::Cancel) == QMessageBox::Cancel) {
       return;
     }
   }
