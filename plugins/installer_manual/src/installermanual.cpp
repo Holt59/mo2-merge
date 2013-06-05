@@ -108,7 +108,8 @@ void InstallerManual::openFile(const QString &fileName)
 }
 
 
-IPluginInstaller::EInstallResult InstallerManual::install(GuessedValue<QString> &modName, DirectoryTree &tree)
+IPluginInstaller::EInstallResult InstallerManual::install(GuessedValue<QString> &modName, DirectoryTree &tree,
+                                                          QString&, int&)
 {
   qDebug("offering installation dialog");
   InstallDialog dialog(&tree, modName, parentWidget());
