@@ -12,6 +12,10 @@ CONFIG += dll
 
 QT += declarative script
 
+contains(QT_VERSION, "^5.*") {
+  QT += widgets
+}
+
 DEFINES += INSTALLERMANUAL_LIBRARY
 
 SOURCES += installermanual.cpp \
@@ -26,3 +30,6 @@ include(../plugin_template.pri)
 
 FORMS += \
     installdialog.ui
+
+OTHER_FILES += \
+    installermanual.json
