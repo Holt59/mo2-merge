@@ -299,7 +299,7 @@ void InstallDialog::on_okButton_clicked()
     if (QMessageBox::question(this, tr("Continue?"),
                               tr("This mod was probably NOT set up correctly, most likely it will NOT work. "
                                  "You should first correct the directory layout using the content-tree."),
-                              QMessageBox::Ignore | QMessageBox::Cancel) == QMessageBox::Cancel) {
+                              QMessageBox::Ignore | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel) {
       return;
     }
   }
