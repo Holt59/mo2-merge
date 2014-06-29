@@ -52,6 +52,7 @@ InstallDialog::InstallDialog(DirectoryTree *tree, const GuessedValue<QString> &m
   connect(m_Tree, SIGNAL(changed()), this, SLOT(treeChanged()));
 
   updatePreview();
+  ui->nameCombo->setAutoCompletionCaseSensitivity(Qt::CaseSensitive);
 }
 
 InstallDialog::~InstallDialog()
