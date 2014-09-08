@@ -44,7 +44,7 @@ bool InstallerManual::init(IOrganizer *moInfo)
 
 QString InstallerManual::name() const
 {
-  return tr("Manual Installer");
+  return "Manual Installer";
 }
 
 QString InstallerManual::author() const
