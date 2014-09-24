@@ -33,6 +33,7 @@ using namespace MOBase;
 
 
 InstallerManual::InstallerManual()
+  : m_MOInfo(NULL)
 {
 }
 
