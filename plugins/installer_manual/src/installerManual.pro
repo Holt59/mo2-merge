@@ -37,4 +37,5 @@ FORMS += \
     installdialog.ui
 
 OTHER_FILES += \
-    installermanual.json
+    installermanual.json\
+    SConscript
