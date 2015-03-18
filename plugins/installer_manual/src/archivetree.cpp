@@ -28,8 +28,8 @@ ArchiveTree::ArchiveTree(QWidget *parent) :
 
 bool ArchiveTree::testMovePossible(QTreeWidgetItem *source, QTreeWidgetItem *target)
 {
-  if ((target == NULL) ||
-      (source == NULL)) {
+  if ((target == nullptr) ||
+      (source == nullptr)) {
     return false;
   }
 
@@ -44,7 +44,7 @@ bool ArchiveTree::testMovePossible(QTreeWidgetItem *source, QTreeWidgetItem *tar
 void ArchiveTree::dragEnterEvent(QDragEnterEvent *event)
 {
   QTreeWidgetItem *source = this->currentItem();
-  if ((source == NULL) || (source->parent() == NULL)) {
+  if ((source == nullptr) || (source->parent() == nullptr)) {
     // can't change top level
     event->ignore();
     return;
@@ -74,12 +74,12 @@ void ArchiveTree::dropEvent(QDropEvent *event)
   for (QList<QTreeWidgetItem*>::iterator iter = sourceItems.begin();
        iter != sourceItems.end(); ++iter) {
     QTreeWidgetItem *source = *iter;
-    if ((source->parent() != NULL) &&
+    if ((source->parent() != nullptr) &&
         testMovePossible(source, target)) {
       source->parent()->removeChild(source);
       if (target->data(0, Qt::UserRole).toInt() != 0) {
         // target is a file
-        if (target->parent() == NULL) {
+        if (target->parent() == nullptr) {
           // this should really not happen, how should a
           // file get to the top level?
           return;
