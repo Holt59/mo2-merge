@@ -34,7 +34,7 @@ using namespace MOBase;
 
 InstallDialog::InstallDialog(DirectoryTree *tree, const GuessedValue<QString> &modName, QWidget *parent)
   : TutorableDialog("InstallDialog", parent), ui(new Ui::InstallDialog),
-    m_DataTree(tree), m_TreeRoot(NULL), m_DataRoot(NULL), m_TreeSelection(NULL),
+    m_DataTree(tree), m_TreeRoot(nullptr), m_DataRoot(nullptr), m_TreeSelection(nullptr),
     m_Updating(false)
 {
   ui->setupUi(this);
@@ -99,8 +99,8 @@ QString InstallDialog::getFullPath(const DirectoryTree::Node *node)
 {
   QString result(node->getData().name);
   const DirectoryTree::Node *parent = node->getParent();
-  while (parent != NULL) {
-    if (parent->getParent() != NULL) {
+  while (parent != nullptr) {
+    if (parent->getParent() != nullptr) {
       result.prepend("\\");
     }
     result.prepend(parent->getData().name);
@@ -205,7 +205,7 @@ void InstallDialog::updateProblems()
 
 void InstallDialog::setDataRoot(QTreeWidgetItem* root)
 {
-  if (root != NULL) {
+  if (root != nullptr) {
     m_DataRoot = root;
 
     m_Tree->takeTopLevelItem(0);
@@ -225,9 +225,9 @@ void InstallDialog::setDataRoot(QTreeWidgetItem* root)
 
 void InstallDialog::use_as_data()
 {
-  if (m_TreeSelection != NULL) {
+  if (m_TreeSelection != nullptr) {
     setDataRoot(m_TreeSelection);
-    m_TreeSelection = NULL;
+    m_TreeSelection = nullptr;
   }
   updateProblems();
 }
@@ -235,7 +235,7 @@ void InstallDialog::use_as_data()
 
 void InstallDialog::unset_data()
 {
-  m_TreeSelection = NULL;
+  m_TreeSelection = nullptr;
 
   setDataRoot(m_TreeRoot);
   updateProblems();
