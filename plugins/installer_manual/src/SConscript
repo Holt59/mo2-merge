@@ -14,3 +14,6 @@ env.Uic4(env.Glob('*.ui'))
 
 lib = env.SharedLibrary('installerManual', env.Glob('*.cpp'))
 env.InstallModule(lib)
+
+res = env['QT_USED_MODULES']
+Return('res')
