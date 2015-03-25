@@ -10,7 +10,7 @@ env['CPPPATH'] += [ '.' ]
 
 env.AppendUnique(LIBS = 'shell32')
 
-env.Uic4(env.Glob('*.ui'))
+env.Uic(env.Glob('*.ui'))
 
 lib = env.SharedLibrary('installerManual', env.Glob('*.cpp'))
 env.InstallModule(lib)
