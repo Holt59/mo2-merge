@@ -33,7 +33,7 @@ using namespace MOBase;
 
 
 InstallerManual::InstallerManual()
-  : m_MOInfo(NULL)
+  : m_MOInfo(nullptr)
 {
 }
 
