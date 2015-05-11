@@ -125,7 +125,7 @@ void InstallDialog::addDataToTree(DirectoryTree::Node *node, QTreeWidgetItem *tr
   }
 
   // add file elements
-  for (DirectoryTree::leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
+  for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
     QStringList fields(iter->getName());
 
     QTreeWidgetItem *newLeafItem = new QTreeWidgetItem(treeItem, fields);
