@@ -92,8 +92,6 @@ private:
 
   void mapDataNode(MOBase::DirectoryTree::Node *node, QTreeWidgetItem *baseItem) const;
 
-  static QString getFullPath(const MOBase::DirectoryTree::Node *node);
-
 private slots:
 
   void on_treeContent_customContextMenuRequested(QPoint pos);
