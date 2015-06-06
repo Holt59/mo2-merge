@@ -95,28 +95,14 @@ DirectoryTree *InstallDialog::getModifiedTree() const
 }
 
 
-QString InstallDialog::getFullPath(const DirectoryTree::Node *node)
-{
-  QString result(node->getData().name);
-  const DirectoryTree::Node *parent = node->getParent();
-  while (parent != nullptr) {
-    if (parent->getParent() != nullptr) {
-      result.prepend("\\");
-    }
-    result.prepend(parent->getData().name);
-    parent = parent->getParent();
-  }
-  return result;
-}
-
 
 void InstallDialog::addDataToTree(DirectoryTree::Node *node, QTreeWidgetItem *treeItem)
 {
-  QString path = getFullPath(node);
+  QString path = node->getFullPath();
 
   // add directory elements
   for (DirectoryTree::node_iterator iter = node->nodesBegin(); iter != node->nodesEnd(); ++iter) {
-    QStringList fields((*iter)->getData().name);
+    QStringList fields((*iter)->getData().name.toQString());
     QTreeWidgetItem *newNodeItem = new QTreeWidgetItem(treeItem, fields);
     newNodeItem->setFlags(newNodeItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
     newNodeItem->setCheckState(0, Qt::Checked);
@@ -126,15 +112,16 @@ void InstallDialog::addDataToTree(DirectoryTree::Node *node, QTreeWidgetItem *tr
 
   // add file elements
   for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
-    QStringList fields(iter->getName());
+    QString field(iter->getName().toQString());
+    QStringList fields(field);
 
     QTreeWidgetItem *newLeafItem = new QTreeWidgetItem(treeItem, fields);
     newLeafItem->setFlags(newLeafItem->flags() | Qt::ItemIsUserCheckable);
     newLeafItem->setCheckState(0, Qt::Checked);
     if (path.size() != 0) {
-      newLeafItem->setToolTip(0, path.mid(0).append("\\").append(iter->getName()));
+      newLeafItem->setToolTip(0, path.mid(0).append("\\").append(field));
     } else {
-      newLeafItem->setToolTip(0, iter->getName());
+      newLeafItem->setToolTip(0, field);
     }
     newLeafItem->setData(0, Qt::UserRole, iter->getIndex());
 
