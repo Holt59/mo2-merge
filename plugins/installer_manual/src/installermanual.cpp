@@ -60,7 +60,7 @@ QString InstallerManual::description() const
 
 VersionInfo InstallerManual::version() const
 {
-  return VersionInfo(1, 0, 0, VersionInfo::RELEASE_FINAL);
+  return VersionInfo(1, 0, 1, VersionInfo::RELEASE_FINAL);
 }
 
 bool InstallerManual::isActive() const
