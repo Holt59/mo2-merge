@@ -118,7 +118,7 @@ void InstallDialog::addDataToTree(DirectoryTree::Node *node, QTreeWidgetItem *tr
     newLeafItem->setFlags(newLeafItem->flags() | Qt::ItemIsUserCheckable);
     newLeafItem->setCheckState(0, Qt::Checked);
     if (path.size() != 0) {
-      newLeafItem->setToolTip(0, path.append("\\").append(field));
+      newLeafItem->setToolTip(0, path + "\\" + field);
     } else {
       newLeafItem->setToolTip(0, field);
     }
