@@ -63,6 +63,17 @@ void ArchiveTree::dragMoveEvent(QDragMoveEvent *event)
   }
 }
 
+static bool isAncestor(const QTreeWidgetItem *ancestor, const QTreeWidgetItem *item)
+{
+  QTreeWidgetItem *iter = item->parent();
+  while (iter != nullptr) {
+    if (iter == ancestor) {
+      return true;
+    }
+    iter = iter->parent();
+  }
+  return false;
+}
 
 void ArchiveTree::dropEvent(QDropEvent *event)
 {
@@ -71,9 +82,14 @@ void ArchiveTree::dropEvent(QDropEvent *event)
   QTreeWidgetItem *target = itemAt(event->pos());
 
   QList<QTreeWidgetItem*> sourceItems = this->selectedItems();
-  for (QList<QTreeWidgetItem*>::iterator iter = sourceItems.begin();
-       iter != sourceItems.end(); ++iter) {
-    QTreeWidgetItem *source = *iter;
+
+  for (QTreeWidgetItem *source : sourceItems) {
+    // don't allow element to be dropped into it's own child element
+    if (isAncestor(source, target)) {
+      event->accept();
+      return;
+    }
+
     if ((source->parent() != nullptr) &&
         testMovePossible(source, target)) {
       source->parent()->removeChild(source);
