@@ -79,7 +79,8 @@ void InstallDialog::mapDataNode(DirectoryTree::Node *node, QTreeWidgetItem *base
         mapDataNode(newNode, currentItem);
         node->addNode(newNode, true);
       } else {
-        node->addLeaf(FileTreeInformation(currentItem->text(0), currentItem->data(0, Qt::UserRole).toInt()));
+        node->addLeaf(FileTreeInformation(currentItem->text(0),
+                                          static_cast<size_t>(currentItem->data(0, Qt::UserRole).toInt())));
       }
     }
   }
