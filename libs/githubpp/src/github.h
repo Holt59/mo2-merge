@@ -16,6 +16,8 @@ public:
     initMessage(errorObj);
   }
 
+  virtual ~GitHubException() throw() override {}
+
   virtual const char *what() const throw()
   {
     return m_Message.constData();
