@@ -12,6 +12,8 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
 FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5LinguistTools)
+QT5_CREATE_TRANSLATION(${PROJ_NAME}_translations_qm ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/${PROJ_NAME}_en.ts)
 
 SET(Boost_USE_STATIC_LIBS        ON)
 SET(Boost_USE_MULTITHREADED      ON)
@@ -31,7 +33,7 @@ SET(lib_path "${project_path}/../../install/libs")
 INCLUDE_DIRECTORIES(${project_path}/uibase/src)
 LINK_DIRECTORIES(${lib_path})
 
-ADD_LIBRARY(${PROJ_NAME} SHARED ${${PROJ_NAME}_HDRS} ${${PROJ_NAME}_SRCS} ${${PROJ_NAME}_UIHDRS})
+ADD_LIBRARY(${PROJ_NAME} SHARED ${${PROJ_NAME}_HDRS} ${${PROJ_NAME}_SRCS} ${${PROJ_NAME}_UIHDRS} ${${PROJ_NAME}_translations_qm})
 TARGET_LINK_LIBRARIES(${PROJ_NAME}
                       Qt5::Widgets Qt5::Declarative
                       ${Boost_LIBRARIES}
