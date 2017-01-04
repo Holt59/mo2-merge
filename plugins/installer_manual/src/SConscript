@@ -2,7 +2,7 @@ Import('qt_env')
 
 env = qt_env.Clone()
 
-env.EnableQtModules('Declarative', 'Script')
+env.EnableQtModules('Qml', 'Script', 'QQuickWidget')
 
 env.AppendUnique(CPPDEFINES = [ 'INSTALLERMANUAL_LIBRARY' ])
 
