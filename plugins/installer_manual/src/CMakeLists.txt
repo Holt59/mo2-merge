@@ -35,14 +35,14 @@ LINK_DIRECTORIES(${lib_path})
 
 ADD_LIBRARY(${PROJ_NAME} SHARED ${${PROJ_NAME}_HDRS} ${${PROJ_NAME}_SRCS} ${${PROJ_NAME}_UIHDRS} ${${PROJ_NAME}_translations_qm})
 TARGET_LINK_LIBRARIES(${PROJ_NAME}
-                      Qt5::Widgets Qt5::Declarative
+                      Qt5::Widgets Qt5::Qml Qt5::QuickWidgets
                       ${Boost_LIBRARIES}
                       uibase)
 
 SET_TARGET_PROPERTIES(${PROJ_NAME} PROPERTIES COMPILE_FLAGS /GL)
 SET_TARGET_PROPERTIES(${PROJ_NAME} PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/LARGEADDRESSAWARE ${OPTIMIZE_LINK_FLAGS}")
 
-QT5_USE_MODULES(${PROJ_NAME} Widgets Declarative)
+QT5_USE_MODULES(${PROJ_NAME} Widgets Qml Script QuickWidgets)
 
 ###############
 ## Installation
