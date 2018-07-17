@@ -37,7 +37,7 @@ QString InstallerQuick::description() const
 
 VersionInfo InstallerQuick::version() const
 {
-  return VersionInfo(1, 1, 0, VersionInfo::RELEASE_FINAL);
+  return VersionInfo(1, 2, 0, VersionInfo::RELEASE_FINAL);
 }
 
 bool InstallerQuick::isActive() const
@@ -86,12 +86,31 @@ bool InstallerQuick::isSimpleArchiveTopLayer(const DirectoryTree::Node *node) co
 }
 
 
+bool InstallerQuick::isDataTextArchiveTopLayer(const DirectoryTree::Node *node) const
+{
+  // a "DataText" archive is defined as having exactly one folder named data
+  // and one or more text files
+  if ((node->numNodes() == 1) &&
+      (node->numLeafs() >= 1) &&
+      ((*node->nodesBegin())->getData().name.toQString().toLower() == "data")) {
+    for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
+      if (!iter->getName().endsWith(".txt")) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+
 const DirectoryTree::Node *InstallerQuick::getSimpleArchiveBase(const DirectoryTree &dataTree) const
 {
   const DirectoryTree::Node *currentNode = &dataTree;
 
   while (true) {
-    if (isSimpleArchiveTopLayer(currentNode)) {
+    if (isSimpleArchiveTopLayer(currentNode) ||
+        isDataTextArchiveTopLayer(currentNode)) {
       return currentNode;
     } else if ((currentNode->numLeafs() == 0) &&
                (currentNode->numNodes() == 1)) {
@@ -120,6 +139,14 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &
     if (m_MOInfo->pluginSetting(name(), "silent").toBool() || dialog.exec() == QDialog::Accepted) {
       modName.update(dialog.getName(), GUESS_USER);
       tree = *(baseNode->copy()); // need to make a copy because baseNode points inside tree
+      if (isDataTextArchiveTopLayer(&tree)) {
+        // move the text files to the data folder and set the data folder as the baseNode
+        // guarenteed there is only one node at this time
+        for (DirectoryTree::const_leaf_iterator iter = tree.leafsBegin(); iter != tree.leafsEnd(); ++iter) {
+          (*tree.nodesBegin())->addLeaf(*iter);
+        }
+        tree = *((*tree.nodesBegin())->copy());
+      }
       return RESULT_SUCCESS;
     } else {
       if (dialog.manualRequested()) {
