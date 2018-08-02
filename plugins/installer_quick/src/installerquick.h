@@ -33,6 +33,7 @@ public:
 private:
 
   bool isSimpleArchiveTopLayer(const MOBase::DirectoryTree::Node *node) const;
+  bool isDataTextArchiveTopLayer(const MOBase::DirectoryTree::Node *node) const;
   const MOBase::DirectoryTree::Node *getSimpleArchiveBase(const MOBase::DirectoryTree &dataTree) const;
 
 private:
