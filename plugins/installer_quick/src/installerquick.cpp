@@ -89,12 +89,13 @@ bool InstallerQuick::isSimpleArchiveTopLayer(const DirectoryTree::Node *node) co
 bool InstallerQuick::isDataTextArchiveTopLayer(const DirectoryTree::Node *node) const
 {
   // a "DataText" archive is defined as having exactly one folder named data
-  // and one or more text files
+  // and one or more text or PDF files (standard package from french modding site).
   if ((node->numNodes() == 1) &&
       (node->numLeafs() >= 1) &&
       ((*node->nodesBegin())->getData().name.toQString().toLower() == "data")) {
     for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
-      if (!iter->getName().endsWith(".txt")) {
+      if (!(iter->getName().endsWith(".txt") || iter->getName().endsWith(".pdf")))
+      {
         return false;
       }
     }
