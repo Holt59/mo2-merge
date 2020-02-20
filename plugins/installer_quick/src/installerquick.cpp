@@ -37,7 +37,7 @@ QString InstallerQuick::description() const
 
 VersionInfo InstallerQuick::version() const
 {
-  return VersionInfo(1, 2, 0, VersionInfo::RELEASE_FINAL);
+  return VersionInfo(1, 3, 0, VersionInfo::RELEASE_FINAL);
 }
 
 bool InstallerQuick::isActive() const
