@@ -26,15 +26,15 @@ public:
   virtual unsigned int priority() const;
   virtual bool isManualInstaller() const;
 
-  virtual bool isArchiveSupported(const MOBase::DirectoryTree &tree) const;
-  virtual EInstallResult install(MOBase::GuessedValue<QString> &modName, MOBase::DirectoryTree &tree,
+  virtual bool isArchiveSupported(std::shared_ptr<const MOBase::IFileTree> tree) const;
+  virtual EInstallResult install(MOBase::GuessedValue<QString> &modName, std::shared_ptr<MOBase::IFileTree> &tree,
                                  QString &version, int &modID);
 
 private:
 
-  bool isSimpleArchiveTopLayer(const MOBase::DirectoryTree::Node *node) const;
-  bool isDataTextArchiveTopLayer(const MOBase::DirectoryTree::Node *node) const;
-  const MOBase::DirectoryTree::Node *getSimpleArchiveBase(const MOBase::DirectoryTree &dataTree) const;
+  bool isSimpleArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree> tree) const;
+  bool isDataTextArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree>) const;
+  std::shared_ptr<const MOBase::IFileTree> getSimpleArchiveBase(std::shared_ptr<const MOBase::IFileTree> dataTree) const;
 
 private:
 
