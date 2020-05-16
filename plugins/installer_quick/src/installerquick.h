@@ -2,6 +2,7 @@
 #define INSTALLERQUICK_H
 
 #include <iplugininstallersimple.h>
+#include <moddatachecker.h>
 
 class InstallerQuick : public MOBase::IPluginInstallerSimple
 {
@@ -32,9 +33,8 @@ public:
 
 private:
 
-  bool isSimpleArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree> tree) const;
-  bool isDataTextArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree>) const;
-  std::shared_ptr<const MOBase::IFileTree> getSimpleArchiveBase(std::shared_ptr<const MOBase::IFileTree> dataTree) const;
+  bool isDataTextArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree>, ModDataChecker* checker) const;
+  std::shared_ptr<const MOBase::IFileTree> getSimpleArchiveBase(std::shared_ptr<const MOBase::IFileTree> dataTree, ModDataChecker* checker) const;
 
 private:
 
