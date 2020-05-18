@@ -47,7 +47,7 @@ std::shared_ptr<const IFileTree> InstallerFomodCSharp::findFomodDirectory(std::s
 std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findScriptFile(std::shared_ptr<const IFileTree> tree) const {
   auto fomodDirectory = findFomodDirectory(tree);
   
-  if (tree == nullptr) {
+  if (fomodDirectory == nullptr) {
     return nullptr;
   }
 
@@ -63,7 +63,7 @@ std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findScriptFile(std::s
 std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findInfoFile(std::shared_ptr<const IFileTree> tree) const {
   auto fomodDirectory = findFomodDirectory(tree);
 
-  if (tree == nullptr) {
+  if (fomodDirectory == nullptr) {
     return nullptr;
   }
 
