@@ -306,7 +306,7 @@ namespace CSharp {
     /// <param name="p_booSelectMany">Whether more than one item can be selected.</param>
     /// <returns>The indices of the selected items.</returns>
     static array<int>^ ImageSelect(array<String^>^ p_strItems, array<Image^>^ p_imgPreviews, array<String^>^ p_strDescriptions, String^ p_strTitle, bool p_booSelectMany) {
-      throw gcnew NotImplementedException("ImageSelect");
+      return Select(p_strItems, gcnew array<String^>(p_strItems->Length), p_strDescriptions, p_strTitle, p_booSelectMany);
     }
 
     /// <summary>
