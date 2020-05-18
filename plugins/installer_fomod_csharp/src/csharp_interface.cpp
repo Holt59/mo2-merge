@@ -12,7 +12,6 @@
 #using <System.Windows.Forms.dll>
 #using <System.Drawing.dll>
 #using <System.dll>
-#using <Microsoft.JScript.dll>
 
 using namespace MOBase;
 
@@ -46,15 +45,11 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
   using namespace System::CodeDom::Compiler;
   using namespace System::Collections::Generic;
   using namespace System::Collections;
-  using namespace System::ComponentModel;
   using namespace System::Diagnostics;
   using namespace System::Drawing;
   using namespace System::IO;
   using namespace System::Windows::Forms;
   using namespace Microsoft::CSharp;
-  using namespace Microsoft::VisualBasic;
-  using namespace Microsoft::JScript;
-  using namespace System::Security::Permissions;
 
   AppDomain^ currentDomain = AppDomain::CurrentDomain;
   currentDomain->AssemblyResolve += gcnew ResolveEventHandler(currentDomain_AssemblyResolve);
