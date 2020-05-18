@@ -260,9 +260,7 @@ namespace CSharp {
     /// <param name="p_strTitle">The title of the selection form.</param>
     /// <param name="p_booSelectMany">Whether more than one item can be selected.</param>
     /// <returns>The indices of the selected items.</returns>
-    static array<int>^ Select(array<SelectOption^>^ p_sopOptions, String^ p_strTitle, bool p_booSelectMany) {
-      throw gcnew NotImplementedException("Select");
-    }
+    static array<int>^ Select(array<SelectOption^>^ p_sopOptions, String^ p_strTitle, bool p_booSelectMany);
 
     /// <summary>
     /// Displays a selection form to the user.
@@ -540,6 +538,10 @@ namespace CSharp {
 }
 
 // BaseScript cannot be in a namespace:
+public ref struct SelectOption: public CSharp::SelectOption { 
+  SelectOption(System::String^ item, System::String^ preview, System::String^ desc) : 
+    CSharp::SelectOption(item, preview, desc) { }
+};
 public ref class BaseScript: public CSharp::BaseScriptImpl { };
 
 #endif

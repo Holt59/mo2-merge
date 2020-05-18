@@ -20,8 +20,15 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 
 #include <QMessageBox>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QInputDialog>
 #include <QSettings>
+#include <QDialogButtonBox>
+#include <QPushButton>
 #include <QVersionNumber>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include "imoinfo.h"
 #include "iplugingame.h"
@@ -295,6 +302,70 @@ namespace CSharp {
     return DialogResult::None;
   }
 
+
+  array<int>^ BaseScriptImpl::Select(array<SelectOption^>^ p_sopOptions, String^ p_strTitle, bool p_booSelectMany) {
+    using namespace System::Collections::Generic;
+
+    QDialog *inputDialog = new QDialog();
+    QVBoxLayout *layout = new QVBoxLayout(inputDialog);
+    inputDialog->setWindowTitle(to_qstring(p_strTitle));
+    inputDialog->setLayout(layout);
+
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+
+    if (p_booSelectMany) {
+      layout->addWidget(new QLabel(QObject::tr("Choose any:"), inputDialog));
+    }
+    else {
+      layout->addWidget(new QLabel(QObject::tr("Choose one:"), inputDialog));
+    }
+
+    QList<QAbstractButton*> items;
+    for each (SelectOption ^ opt in p_sopOptions) {
+      QAbstractButton* btn;
+      if (p_booSelectMany) {
+        btn = new QCheckBox(to_qstring(opt->Item), inputDialog);
+      }
+      else {
+        btn = new QRadioButton(to_qstring(opt->Item), inputDialog);
+      }
+
+      if (!String::IsNullOrEmpty(opt->Desc)) {
+        btn->setToolTip(to_qstring(opt->Desc));
+      }
+
+      layout->addWidget(btn);
+      items.append(btn);
+    }
+    
+    if (!p_booSelectMany && items.size() > 0) {
+      items[0]->setChecked(true);
+    }
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(
+      QDialogButtonBox::Cancel | QDialogButtonBox::Ok, inputDialog);
+    layout->addWidget(buttonBox);
+
+    // Using old signal/slot syntax since the new one does not work here (probably
+    // due to the C++/CLR nature):
+    QObject::connect(buttonBox, SIGNAL(accepted()), inputDialog, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), inputDialog, SLOT(reject()));
+
+    inputDialog->setModal(true);
+    if (inputDialog->exec() != QDialog::Accepted) {
+      return gcnew array<int>(0);
+    }
+
+    List<int>^ selected = gcnew List<int>(items.size());
+    for (int i = 0; i < items.size(); ++i) {
+      if (items[i]->isChecked()) {
+        selected->Add(i);
+      }
+    }
+
+    return selected->ToArray();
+  }
+  
   // Versioning / INIs:
 
   // Convert to Version^ from a MO2 version:
