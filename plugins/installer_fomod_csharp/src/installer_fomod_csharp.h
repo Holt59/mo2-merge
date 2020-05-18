@@ -49,11 +49,13 @@ public:
   }
 
   virtual bool isActive() const override {
-    return true;
+    return m_MOInfo->pluginSetting(name(), "enabled").toBool();
   }
 
   virtual QList<MOBase::PluginSetting> settings() const override {
-    return {};
+    return {
+      MOBase::PluginSetting("enabled", "check to enable this plugin", QVariant(true))
+    };
   }
 
   virtual unsigned int priority() const override {
