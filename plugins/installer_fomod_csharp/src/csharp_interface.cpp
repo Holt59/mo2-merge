@@ -9,8 +9,6 @@
 #include "csharp_utils.h"
 #include "base_script.h"
 
-#using <System.Windows.Forms.dll>
-#using <System.Drawing.dll>
 #using <System.dll>
 
 using namespace MOBase;
@@ -44,12 +42,6 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
   using namespace System::CodeDom;
   using namespace System::CodeDom::Compiler;
   using namespace System::Collections::Generic;
-  using namespace System::Collections;
-  using namespace System::Diagnostics;
-  using namespace System::Drawing;
-  using namespace System::IO;
-  using namespace System::Windows::Forms;
-  using namespace Microsoft::CSharp;
 
   AppDomain^ currentDomain = AppDomain::CurrentDomain;
   currentDomain->AssemblyResolve += gcnew ResolveEventHandler(currentDomain_AssemblyResolve);
@@ -79,8 +71,8 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
   auto result = provider->CompileAssemblyFromSource(cp, script);
 
   int errorCount = 0;
-  for (int i = 0; i < result->Errors->Count; ++i) {
-    CompilerError^ error = result->Errors[i];
+  CompilerErrorCollection^ errors = result->Errors;
+  for each (CompilerError^ error in result->Errors) {
     if (error->IsWarning) {
       log::error("C# [{}]: {}", error->Line, CSharp::to_string(error->ErrorText));
     }

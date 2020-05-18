@@ -20,7 +20,6 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 #using <System.dll>
 #using <System.Drawing.dll>
-#using <System.Security.dll>
 #using <System.Windows.Forms.dll>
 
 /**
@@ -30,17 +29,8 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 namespace CSharp {
 
   using namespace System;
-  using namespace System::CodeDom;
-  using namespace System::CodeDom::Compiler;
-  using namespace System::Collections;
-  using namespace System::ComponentModel;
-  using namespace System::Diagnostics;
   using namespace System::Drawing;
-  using namespace System::IO;
   using namespace System::Windows::Forms;
-  using namespace Microsoft::CSharp;
-  using namespace Microsoft::VisualBasic;
-  using namespace System::Security::Permissions;
 
   /// <summary>
   /// Describes the options to display in a select form.

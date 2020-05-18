@@ -101,6 +101,8 @@ namespace CSharp {
 
 namespace CSharp {
 
+  using namespace System::IO;
+
   bool isFomodEntry(std::shared_ptr<const FileTreeEntry> entry) {
     return entry->pathFrom(g.SourceTree).compare("fomod", Qt::CaseInsensitive) == 0;
   }
