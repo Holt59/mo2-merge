@@ -180,9 +180,7 @@ namespace CSharp {
     /// <param name="p_strPattern">The pattern against which to filter the file paths.</param>
     /// <param name="p_booAllFolders">Whether or not to search through subdirectories.</param>
     /// <returns>A filtered list of all files in a user's Data directory.</returns>
-    static array<String^>^ GetExistingDataFileList(String^ p_strPath, String^ p_strPattern, bool p_booAllFolders) {
-      throw gcnew NotImplementedException("GetExistingDataFileList");
-    }
+    static array<String^>^ GetExistingDataFileList(String^ p_strPath, String^ p_strPattern, bool p_booAllFolders);
 
     /// <summary>
     /// Determines if the specified file exists in the user's Data directory.

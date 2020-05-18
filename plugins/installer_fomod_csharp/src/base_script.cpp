@@ -77,7 +77,7 @@ namespace CSharp {
   std::shared_ptr<MOBase::IFileTree> afterInstall(bool success) {
     auto tree = g.DestinationTree;
 
-    if (!g.Settings.empty()) {
+    if (success && !g.Settings.empty()) {
       QStringList sList;
       for (auto p : g.Settings) {
         for (auto v : p.second) {
@@ -162,6 +162,33 @@ namespace CSharp {
 
     String^ path = from_string(qPath.toStdWString());
     return File::ReadAllBytes(path);
+  }
+
+  QStringList getDataFiles(QString folder, QString pattern, bool allFolders) {
+    QStringList files = g_Organizer->findFiles(folder, [pattern](QString const& filepath) {
+      return QDir::match(pattern, QFileInfo(filepath).fileName());
+    });
+    if (allFolders) {
+      QStringList directories = g_Organizer->listDirectories(folder);
+      for (QString directory : directories) {
+        // MO2 does not like path with . or / (I think), so creating the path manually:
+        files.append(getDataFiles((folder.isEmpty() ? "" : folder + QDir::separator()) + directory, pattern, allFolders));
+      }
+    }
+    return files;
+  }
+
+  array<String^>^ BaseScriptImpl::GetExistingDataFileList(String^ p_strPath, String^ p_strPattern, bool p_booAllFolders) {
+    QStringList files = getDataFiles(to_qstring(p_strPath), to_qstring(p_strPattern), p_booAllFolders);
+    array<String^>^ result = gcnew array<String^>(files.size());
+
+    QDir modsDir(g_Organizer->modsPath());
+    for (int i = 0; i < files.size(); ++i) {
+      // We need to trim the path to the actual folder containing the mod (did not find a better way):
+      QString rpath = modsDir.relativeFilePath(files[i]).replace("/", QDir::separator());
+      result[i] = from_string(rpath.mid(rpath.indexOf(QDir::separator()) + 1).toStdWString());
+    }
+    return result;
   }
 
   bool BaseScriptImpl::DataFileExists(String^ p_strPath) {
