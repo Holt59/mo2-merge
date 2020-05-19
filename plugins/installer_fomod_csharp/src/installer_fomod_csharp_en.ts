@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>FomodCSharpPostDialog</name>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="14"/>
+        <source>Manual steps required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="20"/>
+        <source>The installer needs to create new files (not from the archives) or edit the settings. This cannot be done automatically by Mod Organizer 2, so you will need to manually edit settings or move files from the overwrites folder. Below you can see the list of files created by the installer and the list of settings modified.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FomodCSharpPredialog</name>
     <message>
         <location filename="installer_fomod_csharp_predialog.ui" line="14"/>
@@ -53,14 +66,13 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="89"/>
-        <source>Settings should be updated</source>
+        <location filename="base_script.cpp" line="358"/>
+        <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="90"/>
-        <source>The following settings should be updated:
-%1</source>
+        <location filename="base_script.cpp" line="361"/>
+        <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

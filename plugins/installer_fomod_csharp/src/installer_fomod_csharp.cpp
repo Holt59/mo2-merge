@@ -76,6 +76,21 @@ std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findInfoFile(std::sha
   return nullptr;
 }
 
+
+void InstallerFomodCSharp::appendImageFiles(std::vector<std::shared_ptr<const FileTreeEntry>>& entries, std::shared_ptr<const IFileTree> tree) const
+{
+  static std::set<QString, FileNameComparator> imageSuffixes{ "png", "jpg", "jpeg", "gif", "bmp" };
+  for (auto entry : *tree) {
+    if (entry->isDir()) {
+      appendImageFiles(entries, entry->astree());
+    }
+    else if (imageSuffixes.count(entry->suffix()) > 0) {
+      entries.push_back(entry);
+    }
+  }
+}
+
+
 bool InstallerFomodCSharp::isArchiveSupported(std::shared_ptr<const MOBase::IFileTree> tree) const {
   return findScriptFile(tree) != nullptr;
 }
@@ -96,10 +111,16 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   if (infoFile != nullptr) {
     toExtract.push_back(infoFile);
   }
+  appendImageFiles(toExtract, tree);
 
   QStringList paths(manager()->extractFiles(toExtract));
 
-  if (paths.size() == 2) {
+  // If user cancelled:
+  if (toExtract.size() != paths.size()) {
+    return EInstallResult::RESULT_CANCELED;
+  }
+
+  if (infoFile != nullptr) {
     QFile file(paths[1]);
     if (file.open(QIODevice::ReadOnly)) {
       auto info = FomodInfoReader::readXml(file, &FomodInfoReader::parseInfo);
@@ -113,6 +134,12 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
         version = std::get<2>(info);
       }
     }
+  }
+
+  // Create a map from entry to file path:
+  std::map<std::shared_ptr<const FileTreeEntry>, QString> entryToPath;
+  for (std::size_t i = 0; i < toExtract.size(); ++i) {
+    entryToPath[toExtract[i]] = paths[i];
   }
 
   // Show the dialog:
@@ -133,7 +160,7 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   modName.update(dialog.getName(), GUESS_USER);
 
   // Run the C# script:
-  CSharp::beforeInstall(manager(), parentWidget(), tree);
+  CSharp::beforeInstall(this, manager(), parentWidget(), tree, std::move(entryToPath));
   auto result = CSharp::executeCSharpScript(paths[0]);
   auto newTree = CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS);
   if (result == EInstallResult::RESULT_SUCCESS) {

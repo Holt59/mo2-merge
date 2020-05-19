@@ -38,6 +38,7 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "scriptextender.h"
 
+#include "installer_fomod_postdialog.h"
 #include "csharp_interface.h"
 #include "csharp_utils.h"
 
@@ -55,19 +56,35 @@ namespace CSharp {
     std::shared_ptr<const IFileTree> SourceTree;
     std::shared_ptr<IFileTree> DestinationTree;
 
+    std::map<std::shared_ptr<const FileTreeEntry>, QString> ExtractedEntries;
+
+    // List of modified settings values:
     std::map<QString, std::map<std::pair<QString, QString>, QString>> Settings;
 
+    // List of creates files:
+    std::vector<QString> CreatedFiles;
+
     Globals() { }
-    Globals(MOBase::IInstallationManager* manager, QWidget* parentWidget, std::shared_ptr<MOBase::IFileTree> tree) :
-      InstallManager(manager), ParentWidget(parentWidget), SourceTree(tree), DestinationTree(tree->createOrphanTree()) {
+    Globals(
+      IPlugin const* plugin,MOBase::IInstallationManager* manager, QWidget* parentWidget, 
+      std::shared_ptr<MOBase::IFileTree> tree, std::map<std::shared_ptr<const FileTreeEntry>, QString> entries) :
+        m_Plugin(plugin), InstallManager(manager), ParentWidget(parentWidget), SourceTree(tree), DestinationTree(tree->createOrphanTree()), ExtractedEntries(std::move(entries)) {
 
     }
+
+    /**
+     * @return true if files should be created in overwrites folder, false to fail. 
+     */
+    bool createNewFileInOverwrite() const { return g_Organizer->pluginSetting(m_Plugin->name(), "create_in_overwrite").toBool(); }
 
     Globals(Globals const&) = delete;
     Globals(Globals&&) = default;
 
     Globals& operator=(Globals const&) = delete;
     Globals& operator=(Globals&&) = default;
+
+  private:
+    IPlugin const* m_Plugin;
   };
   static Globals g;
 
@@ -77,24 +94,26 @@ namespace CSharp {
     g_Organizer = moInfo;
   }
 
-  void beforeInstall(MOBase::IInstallationManager* manager, QWidget* parentWidget, std::shared_ptr<MOBase::IFileTree> tree) {
-    g = { manager, parentWidget, tree };
+  void beforeInstall(IPlugin const* plugin, MOBase::IInstallationManager* manager, QWidget* parentWidget, 
+    std::shared_ptr<MOBase::IFileTree> tree, std::map<std::shared_ptr<const FileTreeEntry>, QString> entries) {
+    g = { plugin, manager, parentWidget, tree, std::move(entries) };
   }
 
   std::shared_ptr<MOBase::IFileTree> afterInstall(bool success) {
     auto tree = g.DestinationTree;
 
-    if (success && !g.Settings.empty()) {
-      QStringList sList;
-      for (auto p : g.Settings) {
-        for (auto v : p.second) {
-          sList.append(
-            QString("- %1/%2 = %3 in '%4'").arg(v.first.first).arg(v.first.second).arg(v.second).arg(p.first)
-          );
-        }
+    if (success && !(g.Settings.empty() && g.CreatedFiles.empty())) {
+
+      InstallerFomodPostDialog* dialog = new InstallerFomodPostDialog(g.ParentWidget);
+
+      dialog->setIniSettings(g.Settings);
+
+      for (QString file : g.CreatedFiles) {
+        dialog->addCreatedFile(file);
       }
-      QMessageBox::information(g.ParentWidget, QObject::tr("Settings should be updated"),
-        QObject::tr("The following settings should be updated:\n%1").arg(sList.join("\n")));
+
+      dialog->setModal(false);
+      dialog->show();
     }
 
     // Clear up:
@@ -157,14 +176,21 @@ namespace CSharp {
 
   array<Byte>^ BaseScriptImpl::GetFileFromMod(String^ p_strFile) {
     auto entry = g.SourceTree->find(to_qstring(p_strFile));
-    
+
     if (!entry) {
-      return nullptr;
+      return gcnew array<Byte>(0);
     }
 
-    QString qPath = g.InstallManager->extractFile(entry);
+    QString qPath;
+    if (auto it = g.ExtractedEntries.find(entry); it != g.ExtractedEntries.end()) {
+      qPath = it->second;
+    }
+    else {
+      qPath = g.InstallManager->extractFile(entry);
+    }
+    
     if (qPath.isEmpty()) {
-      return nullptr;
+      return gcnew array<Byte>(0);
     }
 
     String^ path = from_string(qPath.toStdWString());
@@ -203,11 +229,10 @@ namespace CSharp {
   }
 
   array<Byte>^ BaseScriptImpl::GetExistingDataFile(String^ p_strPath) {
+    log::debug("GetExistingDataFile({})", to_qstring(p_strPath));
     // Convert to QString and normalize separator:
     QFileInfo fileInfo(QDir::toNativeSeparators(to_qstring(p_strPath)));
-    log::debug("{} --- {}", fileInfo.path(), fileInfo.fileName());
     QStringList paths = g_Organizer->findFiles(fileInfo.path(), [name = fileInfo.fileName()](QString const& filepath) {
-      log::debug("  {}", filepath);
       return QFileInfo(filepath).fileName().compare(name, Qt::CaseInsensitive) == 0;
     });
 
@@ -218,6 +243,22 @@ namespace CSharp {
     // Read the first file (should be only one):
     String^ path = msclr::interop::marshal_as<String^>(paths[0].toStdWString());
     return File::ReadAllBytes(path);
+  }
+
+  bool BaseScriptImpl::GenerateDataFile(String ^ p_strPath, array<Byte> ^ p_bteData) {
+    log::debug("GenerateDataFile({}, ...)", to_qstring(p_strPath));
+    if (g.createNewFileInOverwrite()) {
+      QString qAbsPath = QDir(g_Organizer->overwritePath()).filePath(to_qstring(p_strPath));
+      log::debug("Creating file {}.", qAbsPath);
+      String^ absPath = from_string(qAbsPath.toStdWString());
+      Directory::CreateDirectory(Path::GetDirectoryName(absPath));
+      File::WriteAllBytes(absPath, p_bteData);
+      g.CreatedFiles.push_back(to_qstring(p_strPath));
+      return true;
+    }
+    else {
+      throw gcnew NotImplementedException("GenerateDataFile");
+    }
   }
 
   // UI methods:

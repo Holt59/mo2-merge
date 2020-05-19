@@ -54,12 +54,15 @@ public:
 
   virtual QList<MOBase::PluginSetting> settings() const override {
     return {
-      MOBase::PluginSetting("enabled", "check to enable this plugin", QVariant(true))
+      MOBase::PluginSetting("enabled", "check to enable this plugin", QVariant(true)),
+      MOBase::PluginSetting("prefer", "prefer this over the NCC based plugin", QVariant(true)),
+      MOBase::PluginSetting("create_in_overwrite", "generate files in overwrite folder instead of failing", QVariant(true))
     };
   }
 
   virtual unsigned int priority() const override {
-    return 150;
+    // It's the same priority as the FOMOD installer but those should never conflict:
+    return m_MOInfo->pluginSetting(name(), "prefer").toBool() ? 110 : 90;
   }
 
   virtual bool isManualInstaller() const override {
@@ -78,6 +81,15 @@ private:
   std::shared_ptr<const MOBase::IFileTree> findFomodDirectory(std::shared_ptr<const MOBase::IFileTree> tree) const;
   std::shared_ptr<const MOBase::FileTreeEntry> findScriptFile(std::shared_ptr<const MOBase::IFileTree> tree) const;
   std::shared_ptr<const MOBase::FileTreeEntry> findInfoFile(std::shared_ptr<const MOBase::IFileTree> tree) const;
+
+  /**
+   * @brief Recurse through the given tree and add all the images to the given vector.
+   *
+   * @param result Vector of entries to add the images.
+   * @param tree The tree to look files in.
+   */
+  void appendImageFiles(
+    std::vector<std::shared_ptr<const MOBase::FileTreeEntry>>& entries, std::shared_ptr<const MOBase::IFileTree> tree) const;
 };
 
 #endif

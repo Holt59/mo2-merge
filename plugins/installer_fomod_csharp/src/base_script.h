@@ -207,10 +207,7 @@ namespace CSharp {
     /// <param name="p_strPath">The path where the file is to be created.</param>
     /// <param name="p_bteData">The data that is to make up the file.</param>
     /// <returns><c>true</c> if the file was written; <c>false</c> otherwise.</returns>
-    static bool GenerateDataFile(String^ p_strPath, array<String^>^ p_bteData) {
-      // There is no way to do this in the current state of the installers... 
-      throw gcnew NotImplementedException("GenerateDataFile");
-    }
+    static bool GenerateDataFile(String^ p_strPath, array<Byte>^ p_bteData);
 
     /// <summary>
     /// Shows a message box with the given message.
