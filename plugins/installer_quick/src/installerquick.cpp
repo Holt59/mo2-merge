@@ -5,6 +5,8 @@
 #include <QtPlugin>
 #include <QDialog>
 
+#include "log.h"
+
 
 using namespace MOBase;
 
@@ -65,19 +67,25 @@ bool InstallerQuick::isManualInstaller() const
 }
 
 
-bool InstallerQuick::isSimpleArchiveTopLayer(const DirectoryTree::Node *node) const
+bool InstallerQuick::isSimpleArchiveTopLayer(std::shared_ptr<const IFileTree> tree) const 
 {
+  static std::set<QString, MOBase::FileNameComparator> tlDirectoryNames = {
+    "fonts", "interface", "menus", "meshes", "music", "scripts", "shaders",
+    "sound", "strings", "textures", "trees", "video", "facegen", "materials",
+    "skse", "obse", "mwse", "nvse", "fose", "f4se", "distantlod", "asi",
+    "SkyProc Patchers", "Tools", "MCM", "icons", "bookart", "distantland",
+    "mits", "splash", "dllplugins", "CalienteTools", "NetScriptFramework",
+    "shadersfx"
+  };
+  static std::set<QString, MOBase::FileNameComparator> tlSuffixes = { 
+    "esp", "esm", "esl", "bsa", "ba2", ".modgroups" };
+
   // see if there is at least one directory that makes sense on the top level
-  for (DirectoryTree::const_node_iterator iter = node->nodesBegin(); iter != node->nodesEnd(); ++iter) {
-    if (InstallationTester::isTopLevelDirectory((*iter)->getData().name)) {
-      qDebug("%s on the top level", (*iter)->getData().name.toUtf8().constData());
+  for (auto entry : *tree) {
+    if (entry->isDir() && tlDirectoryNames.count(entry->name()) > 0) {
       return true;
     }
-  }
-
-  // see if there is a file that makes sense on the top level
-  for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
-    if (InstallationTester::isTopLevelSuffix(iter->getName())) {
+    else if (entry->isFile() && tlSuffixes.count(entry->suffix()) > 0) {
       return true;
     }
   }
@@ -86,67 +94,70 @@ bool InstallerQuick::isSimpleArchiveTopLayer(const DirectoryTree::Node *node) co
 }
 
 
-bool InstallerQuick::isDataTextArchiveTopLayer(const DirectoryTree::Node *node) const
+bool InstallerQuick::isDataTextArchiveTopLayer(std::shared_ptr<const IFileTree> tree) const
 {
-  // a "DataText" archive is defined as having exactly one folder named data
+  // A "DataText" archive is defined as having exactly one folder named data
   // and one or more text or PDF files (standard package from french modding site).
-  if ((node->numNodes() == 1) &&
-      (node->numLeafs() >= 1) &&
-      ((*node->nodesBegin())->getData().name.toQString().toLower() == "data")) {
-    for (DirectoryTree::const_leaf_iterator iter = node->leafsBegin(); iter != node->leafsEnd(); ++iter) {
-      if (!(iter->getName().endsWith(".txt") || iter->getName().endsWith(".pdf")))
-      {
+  static const std::set<QString, FileNameComparator> txtExtensions{ "txt", "pdf" };
+  bool dataFound = false;
+  bool txtFound = false;
+  for (auto entry : *tree) {
+    if (entry->isDir()) {
+      // If data was already found, or this is a directory not named "data", fail:
+      if (dataFound || entry->compare("data") != 0) {
         return false;
       }
+      dataFound = true;
     }
-    return true;
+    else {
+      if (txtExtensions.count(entry->suffix()) == 0) {
+        return false;
+      }
+      txtFound = true;
+    }
   }
-  return false;
+  return dataFound && txtFound;
 }
 
 
-const DirectoryTree::Node *InstallerQuick::getSimpleArchiveBase(const DirectoryTree &dataTree) const
+std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(std::shared_ptr<const IFileTree> dataTree) const
 {
-  const DirectoryTree::Node *currentNode = &dataTree;
-
   while (true) {
-    if (isSimpleArchiveTopLayer(currentNode) ||
-        isDataTextArchiveTopLayer(currentNode)) {
-      return currentNode;
-    } else if ((currentNode->numLeafs() == 0) &&
-               (currentNode->numNodes() == 1)) {
-      currentNode = *currentNode->nodesBegin();
+    if (isSimpleArchiveTopLayer(dataTree) ||
+        isDataTextArchiveTopLayer(dataTree)) {
+      return dataTree;
+    } else if (dataTree->size() == 1 && dataTree->at(0)->isDir()) {
+      dataTree = dataTree->at(0)->astree();
     } else {
-      qDebug("not a simple archive");
+      log::debug("Archive is not a simple archive.");
       return nullptr;
     }
   }
 }
 
 
-bool InstallerQuick::isArchiveSupported(const DirectoryTree &tree) const
+bool InstallerQuick::isArchiveSupported(std::shared_ptr<const IFileTree> tree) const
 {
-  const DirectoryTree::Node *baseNode = getSimpleArchiveBase(tree);
-  return baseNode != nullptr;
+  return getSimpleArchiveBase(tree) != nullptr;
 }
 
 
-IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &modName, DirectoryTree &tree,
+IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &modName, std::shared_ptr<IFileTree> &tree,
                                                          QString&, int&)
 {
-  const DirectoryTree::Node *baseNode = getSimpleArchiveBase(tree);
-  if (baseNode != nullptr) {
+  tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree));
+  if (tree != nullptr) {
     SimpleInstallDialog dialog(modName, parentWidget());
     if (m_MOInfo->pluginSetting(name(), "silent").toBool() || dialog.exec() == QDialog::Accepted) {
       modName.update(dialog.getName(), GUESS_USER);
-      tree = *(baseNode->copy()); // need to make a copy because baseNode points inside tree
-      if (isDataTextArchiveTopLayer(&tree)) {
-        // move the text files to the data folder and set the data folder as the baseNode
-        // guarenteed there is only one node at this time
-        for (DirectoryTree::const_leaf_iterator iter = tree.leafsBegin(); iter != tree.leafsEnd(); ++iter) {
-          (*tree.nodesBegin())->addLeaf(*iter);
-        }
-        tree = *((*tree.nodesBegin())->copy());
+
+      // If we have a data+txt archive, we move files to the data folder and
+      // switch to the data folder:
+      if (isDataTextArchiveTopLayer(tree)) {
+        auto dataTree = tree->findDirectory("data");
+        dataTree->detach();
+        dataTree->merge(tree);
+        tree = dataTree;
       }
       return RESULT_SUCCESS;
     } else {
