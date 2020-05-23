@@ -69,9 +69,10 @@ bool InstallerQuick::isManualInstaller() const
 }
 
 
-bool InstallerQuick::isDataTextArchiveTopLayer(std::shared_ptr<const IFileTree> tree, ModDataChecker* checker) const
+bool InstallerQuick::isDataTextArchiveTopLayer(
+  std::shared_ptr<const IFileTree> tree, QString const& dataFolderName, ModDataChecker* checker) const
 {
-  // A "DataText" archive is defined as having exactly one folder named X (X = checker->getDataFolderName())
+  // A "DataText" archive is defined as having exactly one folder named like `dataFolderName`
   // and one or more text or PDF files (standard package from french modding site).
   static const std::set<QString, FileNameComparator> txtExtensions{ "txt", "pdf" };
   bool dataFound = false;
@@ -79,7 +80,7 @@ bool InstallerQuick::isDataTextArchiveTopLayer(std::shared_ptr<const IFileTree> 
   for (auto entry : *tree) {
     if (entry->isDir()) {
       // If data was already found, or this is a directory not named "data", fail:
-      if (dataFound || entry->compare(checker->getDataFolderName()) != 0) {
+      if (dataFound || entry->compare(dataFolderName) != 0) {
         return false;
       }
       dataFound = true;
@@ -95,14 +96,15 @@ bool InstallerQuick::isDataTextArchiveTopLayer(std::shared_ptr<const IFileTree> 
 }
 
 
-std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(std::shared_ptr<const IFileTree> dataTree, ModDataChecker* checker) const
+std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(
+  std::shared_ptr<const IFileTree> dataTree, QString const& dataFolderName, ModDataChecker* checker) const
 {
   if (!checker) {
     return nullptr;
   }
   while (true) {
     if (checker->dataLooksValid(dataTree) ||
-        isDataTextArchiveTopLayer(dataTree, checker)) {
+        isDataTextArchiveTopLayer(dataTree, dataFolderName, checker)) {
       return dataTree;
     } else if (dataTree->size() == 1 && dataTree->at(0)->isDir()) {
       dataTree = dataTree->at(0)->astree();
@@ -116,15 +118,16 @@ std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(std::share
 
 bool InstallerQuick::isArchiveSupported(std::shared_ptr<const IFileTree> tree) const
 {
-  return getSimpleArchiveBase(tree, m_MOInfo->managedGame()->feature<ModDataChecker>()) != nullptr;
+  return getSimpleArchiveBase(tree, m_MOInfo->managedGame()->dataDirectory().dirName(), m_MOInfo->managedGame()->feature<ModDataChecker>()) != nullptr;
 }
 
 
 IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &modName, std::shared_ptr<IFileTree> &tree,
                                                          QString&, int&)
 {
+  const QString dataFolderName = m_MOInfo->managedGame()->dataDirectory().dirName();
   ModDataChecker* checker = m_MOInfo->managedGame()->feature<ModDataChecker>();
-  tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, checker));
+  tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, dataFolderName, checker));
   if (tree != nullptr) {
     SimpleInstallDialog dialog(modName, parentWidget());
     if (m_MOInfo->pluginSetting(name(), "silent").toBool() || dialog.exec() == QDialog::Accepted) {
@@ -134,8 +137,8 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &
       // switch to the data folder. We need to check that we actually have a
       // checker here, otherwize it is anyway impossible that isDataTextArchiveTopLayer()
       // returned true.
-      if (checker && isDataTextArchiveTopLayer(tree, checker)) {
-        auto dataTree = tree->findDirectory(checker->getDataFolderName());
+      if (checker && isDataTextArchiveTopLayer(tree, dataFolderName, checker)) {
+        auto dataTree = tree->findDirectory(dataFolderName);
         dataTree->detach();
         dataTree->merge(tree);
         tree = dataTree;
