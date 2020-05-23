@@ -47,7 +47,7 @@ private:
    * @param dataFolderName Name of the data folder (e.g., "data" for gamebryo games).
    * @param checker The mod data checker, or a null pointer if none is available.
    *
-   * @return true if the tree represents a "DataText" archive, false otherwize.
+   * @return true if the tree represents a "DataText" archive, false otherwise.
    */
   bool isDataTextArchiveTopLayer(
     std::shared_ptr<const MOBase::IFileTree> tree, QString const& dataFolderName, ModDataChecker* checker) const;
