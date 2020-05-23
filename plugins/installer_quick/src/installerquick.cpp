@@ -135,7 +135,7 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &
 
       // If we have a data+txt archive, we move files to the data folder and
       // switch to the data folder. We need to check that we actually have a
-      // checker here, otherwize it is anyway impossible that isDataTextArchiveTopLayer()
+      // checker here, otherwise it is anyway impossible that isDataTextArchiveTopLayer()
       // returned true.
       if (checker && isDataTextArchiveTopLayer(tree, dataFolderName, checker)) {
         auto dataTree = tree->findDirectory(dataFolderName);
