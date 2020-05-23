@@ -33,8 +33,11 @@ public:
 
 private:
 
-  bool isDataTextArchiveTopLayer(std::shared_ptr<const MOBase::IFileTree>, ModDataChecker* checker) const;
-  std::shared_ptr<const MOBase::IFileTree> getSimpleArchiveBase(std::shared_ptr<const MOBase::IFileTree> dataTree, ModDataChecker* checker) const;
+  bool isDataTextArchiveTopLayer(
+    std::shared_ptr<const MOBase::IFileTree>, QString const& dataFolderName, ModDataChecker* checker) const;
+  
+  std::shared_ptr<const MOBase::IFileTree> getSimpleArchiveBase(
+    std::shared_ptr<const MOBase::IFileTree> dataTree, QString const& dataFolderName, ModDataChecker* checker) const;
 
 private:
 
