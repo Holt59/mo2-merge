@@ -110,41 +110,41 @@ namespace CSharp {
 
   IPluginInstaller::EInstallResult executeCSharpScript(QString scriptPath) {
 
-    // Read the script:
-    std::string script;
+    using namespace System;
+    using namespace System::IO;
+    using namespace System::Text::RegularExpressions;
 
+    // Note: Using C# stuff here to mimicate NMM since there are some encoding issues, and
+    // some regex do not work in C++:
+    array<Byte>^ scriptBytes = File::ReadAllBytes(from_string(scriptPath.toStdWString()));
+    
+    // Read the script (using C# to "auto-detect" encoding in a C# way):
+    String^ script;
     {
-      std::ifstream t(scriptPath.toStdString());
-      std::stringstream buffer;
-      buffer << t.rdbuf();
-      script = buffer.str();
+      auto memoryStream = gcnew MemoryStream(scriptBytes);
+      auto reader = gcnew StreamReader(memoryStream, true);
+    
+      script = reader->ReadToEnd();
+
+      reader->Close();
+      memoryStream->Close();
+
+      delete reader;
+      delete memoryStream;
     }
 
-    // This matches the script class to retrieve the "BaseScript" name in the file:
-    std::regex m_regScriptClass(R"re((class\s+Script\s*:.*?)(\S*BaseScript))re");
 
-    std::smatch results;
-    std::regex_search(script, results, m_regScriptClass);
+    Regex ^regScriptClass = gcnew Regex(R"re((class\s+Script\s*:.*?)(\S*BaseScript))re");
+    Regex ^regFommUsing = gcnew Regex(R"re(\s*using\s*fomm.Scripting\s*;)re");
 
-    // No result, no script!
-    if (!results.size()) {
-      log::debug("C#: Did not find 'Script' class in {}.", scriptPath);
-      return IPluginInstaller::EInstallResult::RESULT_FAILED;
-    }
+    String^ strBaseScriptClassName = regScriptClass->Match(script)->Groups[2]->ToString();
+    Regex^ regOtherScriptClasses = gcnew Regex(String::Format(R"re((class\s+\S+\s*:.*?)(?<!\w){0})re", strBaseScriptClassName));
+    String^ strCode = script;
+    strCode = regScriptClass->Replace(strCode, "$1BaseScript");
+    strCode = regOtherScriptClasses->Replace(strCode, "$1BaseScript");
+    strCode = regFommUsing->Replace(strCode, "");
 
-    // Replace the base script name used by BaseScript - Slightly modified regex since
-    // C++ does not support look-behind:
-    std::string baseScriptName = results[2].str();
-    std::regex m_regBaseScriptName(R"re((class\s+\S+\s*:.*?)[^\w])re" + baseScriptName);
-    script = std::regex_replace(script, m_regBaseScriptName, "$1BaseScript");
-
-    // This simply matches the use fomm.Scripting to remove it:
-    std::regex m_regFommUsing(R"re(\s*using\s*fomm.Scripting\s*;)re");
-    script = std::regex_replace(script, m_regFommUsing, "");
-
-    String^ scriptSharp = msclr::interop::marshal_as<String^>(script);
-
-    auto result = executeScript(scriptSharp);
+    auto result = executeScript(strCode);
 
     if (result != IPluginInstaller::EInstallResult::RESULT_SUCCESS) {
       return result;
