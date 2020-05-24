@@ -38,10 +38,21 @@ std::shared_ptr<const IFileTree> InstallerFomodCSharp::findFomodDirectory(std::s
     return entry->astree();
   }
 
-  if (tree->size() == 1 && tree->at(0)->isDir()) {
-    return findFomodDirectory(tree->at(0)->astree());
+  if (tree->empty()) {
+    return nullptr;
   }
-  return nullptr;
+
+  // We need at least a directory:
+  if (!tree->at(0)->isDir()) {
+    return nullptr;
+  }
+
+  // But not two:
+  if (tree->size() > 1 && tree->at(1)->isDir()) {
+    return nullptr;
+  }
+
+  return findFomodDirectory(tree->at(0)->astree());
 }
 
 std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findScriptFile(std::shared_ptr<const IFileTree> tree) const {
@@ -160,7 +171,7 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   modName.update(dialog.getName(), GUESS_USER);
 
   // Run the C# script:
-  CSharp::beforeInstall(this, manager(), parentWidget(), tree, std::move(entryToPath));
+  CSharp::beforeInstall(this, manager(), parentWidget(), std::const_pointer_cast<IFileTree>(scriptFile->parent()->parent()), std::move(entryToPath));
   auto result = CSharp::executeCSharpScript(paths[0]);
   auto newTree = CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS);
   if (result == EInstallResult::RESULT_SUCCESS) {
