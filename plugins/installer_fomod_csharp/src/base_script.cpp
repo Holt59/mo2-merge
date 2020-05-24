@@ -146,7 +146,7 @@ namespace CSharp {
     auto sourceEntry = g.SourceTree->find(to_qstring(p_strFrom));
 
     if (!sourceEntry) {
-      log::warn("File '{}' not found in the archive.", sourceEntry->path());
+      log::warn("File '{}' not found in the archive.", to_wstring(p_strFrom));
       return false;
     }
 
