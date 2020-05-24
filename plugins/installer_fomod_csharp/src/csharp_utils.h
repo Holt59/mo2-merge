@@ -17,6 +17,9 @@ namespace CSharp {
    */
   inline std::string to_string(System::String^ value) {
     return msclr::interop::marshal_as<std::string>(value);
+  }  
+  inline std::wstring to_wstring(System::String^ value) {
+    return msclr::interop::marshal_as<std::wstring>(value);
   }
   inline QString to_qstring(System::String^ value) {
     return QString::fromStdString(to_string(value));

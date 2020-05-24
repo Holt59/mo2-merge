@@ -90,11 +90,17 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
   try {
     auto scriptClass = result->CompiledAssembly->GetType("Script");
     BaseScript^ scriptObject = (BaseScript^)System::Activator::CreateInstance(scriptClass);
-    auto success = (bool)scriptObject->GetType()->GetMethod("OnActivate")->Invoke(scriptObject, nullptr);
+    auto onActivateMethod = scriptObject->GetType()->GetMethod("OnActivate");
+
+    auto success = (bool)(onActivateMethod->IsStatic ? onActivateMethod->Invoke(nullptr, nullptr) : onActivateMethod->Invoke(scriptObject, nullptr));
     return success ? IPluginInstaller::EInstallResult::RESULT_SUCCESS : IPluginInstaller::EInstallResult::RESULT_CANCELED;
   }
   catch (Exception^ ex) {
     log::error("C# ({}): {}\n{}", CSharp::to_string(ex->GetType()->FullName), CSharp::to_string(ex->Message), CSharp::to_string(ex->StackTrace));
+    Exception^ innerEx = ex->InnerException;
+    if (innerEx) {
+      log::error("C# ({}): {}\n{}", CSharp::to_string(innerEx->GetType()->FullName), CSharp::to_string(innerEx->Message), CSharp::to_string(innerEx->StackTrace));
+    }
     return IPluginInstaller::EInstallResult::RESULT_FAILED;
   }
  
