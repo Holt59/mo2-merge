@@ -66,12 +66,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="358"/>
+        <location filename="base_script.cpp" line="362"/>
         <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="361"/>
+        <location filename="base_script.cpp" line="365"/>
         <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>
