@@ -22,12 +22,16 @@ namespace CSharp {
     return msclr::interop::marshal_as<std::wstring>(value);
   }
   inline QString to_qstring(System::String^ value) {
-    return QString::fromStdString(to_string(value));
+    msclr::interop::marshal_context ctx;
+    return QString::fromWCharArray(ctx.marshal_as<const wchar_t*>(value));
   }
 
   template <class Str>
   inline System::String^ from_string(Str const& string) {
     return msclr::interop::marshal_as<System::String^>(string);
+  }
+  inline System::String^ from_string(QString const& string) {
+    return msclr::interop::marshal_as<System::String^>(string.toStdWString().c_str());
   }
 
 }
