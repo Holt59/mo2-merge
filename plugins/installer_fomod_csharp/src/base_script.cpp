@@ -163,7 +163,7 @@ namespace CSharp {
       }
       paths.push_back(path + entry->name());
       return IFileTree::WalkReturn::CONTINUE;
-    });
+    }, "/");
 
     // Convert to C#:
     array<String^>^ result = gcnew array<String^>(paths.size());
