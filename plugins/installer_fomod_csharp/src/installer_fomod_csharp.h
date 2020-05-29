@@ -1,6 +1,3 @@
-#ifndef INSTALLER_FOMOD_CSHARP_H
-#define INSTALLER_FOMOD_CSHARP_H
-
 /*
 Copyright (C) 2020 Holt59. All rights reserved.
 
@@ -17,6 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef INSTALLER_FOMOD_CSHARP_H
+#define INSTALLER_FOMOD_CSHARP_H
 
 #include "iplugininstallersimple.h"
 
@@ -82,14 +82,6 @@ private:
   std::shared_ptr<const MOBase::FileTreeEntry> findScriptFile(std::shared_ptr<const MOBase::IFileTree> tree) const;
   std::shared_ptr<const MOBase::FileTreeEntry> findInfoFile(std::shared_ptr<const MOBase::IFileTree> tree) const;
 
-  /**
-   * @brief Recurse through the given tree and add all the images to the given vector.
-   *
-   * @param result Vector of entries to add the images.
-   * @param tree The tree to look files in.
-   */
-  void appendImageFiles(
-    std::vector<std::shared_ptr<const MOBase::FileTreeEntry>>& entries, std::shared_ptr<const MOBase::IFileTree> tree) const;
 };
 
 #endif

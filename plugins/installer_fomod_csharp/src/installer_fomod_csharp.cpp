@@ -87,27 +87,14 @@ std::shared_ptr<const FileTreeEntry> InstallerFomodCSharp::findInfoFile(std::sha
   return nullptr;
 }
 
-
-void InstallerFomodCSharp::appendImageFiles(std::vector<std::shared_ptr<const FileTreeEntry>>& entries, std::shared_ptr<const IFileTree> tree) const
-{
-  static std::set<QString, FileNameComparator> imageSuffixes{ "png", "jpg", "jpeg", "gif", "bmp" };
-  for (auto entry : *tree) {
-    if (entry->isDir()) {
-      appendImageFiles(entries, entry->astree());
-    }
-    else if (imageSuffixes.count(entry->suffix()) > 0) {
-      entries.push_back(entry);
-    }
-  }
-}
-
-
 bool InstallerFomodCSharp::isArchiveSupported(std::shared_ptr<const MOBase::IFileTree> tree) const {
   return findScriptFile(tree) != nullptr;
 }
 
 InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::GuessedValue<QString>& modName, std::shared_ptr<MOBase::IFileTree>& tree,
-  QString& version, int& modID) {
+  QString& version, int& modID) 
+{
+  static std::set<QString, FileNameComparator> imageSuffixes{ "png", "jpg", "jpeg", "gif", "bmp" };
 
   // Extract the script file:
   auto scriptFile = findScriptFile(tree);
@@ -115,15 +102,35 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
     return EInstallResult::RESULT_NOTATTEMPTED;
   }
 
-  std::vector<std::shared_ptr<const FileTreeEntry>> toExtract{ scriptFile };
-
   // Check if there is a info.xml:
   auto infoFile = findInfoFile(tree);
-  if (infoFile != nullptr) {
-    toExtract.push_back(infoFile);
-  }
-  appendImageFiles(toExtract, tree);
 
+  // Set containing everything to extract except the script and the info file:
+  std::set<std::shared_ptr<const FileTreeEntry>> toExtractSet{ scriptFile };
+
+  if (infoFile != nullptr) {
+    toExtractSet.insert(infoFile);
+  }
+
+  // Extract all the images:
+  tree->walk([&](const QString&, auto entry) {
+    if (entry->isFile() && imageSuffixes.count(entry->suffix()) > 0) {
+      toExtractSet.insert(entry);
+    }
+    return IFileTree::WalkReturn::CONTINUE;
+  });
+
+  // Extract everything from the fomod/ folder:
+  auto fomodFolder = findFomodDirectory(tree);
+  fomodFolder->walk([&](const QString&, auto entry) {
+    if (entry->isFile()) {
+      toExtractSet.insert(entry);
+    }
+    return IFileTree::WalkReturn::CONTINUE;
+  });
+
+  // Convert to vector:
+  std::vector toExtract(std::begin(toExtractSet), std::end(toExtractSet));
   QStringList paths(manager()->extractFiles(toExtract));
 
   // If user cancelled:
@@ -131,8 +138,14 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
     return EInstallResult::RESULT_CANCELED;
   }
 
+  // Create a map from entry to file path:
+  std::map<std::shared_ptr<const FileTreeEntry>, QString> entryToPath;
+  for (std::size_t i = 0; i < toExtract.size(); ++i) {
+    entryToPath[toExtract[i]] = paths[i];
+  }
+
   if (infoFile != nullptr) {
-    QFile file(paths[1]);
+    QFile file(entryToPath[infoFile]);
     if (file.open(QIODevice::ReadOnly)) {
       auto info = FomodInfoReader::readXml(file, &FomodInfoReader::parseInfo);
       if (!std::get<0>(info).isEmpty()) {
@@ -145,12 +158,6 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
         version = std::get<2>(info);
       }
     }
-  }
-
-  // Create a map from entry to file path:
-  std::map<std::shared_ptr<const FileTreeEntry>, QString> entryToPath;
-  for (std::size_t i = 0; i < toExtract.size(); ++i) {
-    entryToPath[toExtract[i]] = paths[i];
   }
 
   // Show the dialog:
@@ -171,8 +178,9 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   modName.update(dialog.getName(), GUESS_USER);
 
   // Run the C# script:
+  const QString scriptPath = entryToPath[scriptFile];
   CSharp::beforeInstall(this, manager(), parentWidget(), std::const_pointer_cast<IFileTree>(scriptFile->parent()->parent()), std::move(entryToPath));
-  auto result = CSharp::executeCSharpScript(paths[0]);
+  auto result = CSharp::executeCSharpScript(scriptPath);
   auto newTree = CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS);
   if (result == EInstallResult::RESULT_SUCCESS) {
     tree = newTree;
