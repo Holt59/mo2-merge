@@ -229,7 +229,7 @@ namespace CSharp {
   }
 
   array<Byte>^ BaseScriptImpl::GetExistingDataFile(String^ p_strPath) {
-    log::debug("GetExistingDataFile({})", to_qstring(p_strPath));
+
     // Convert to QString and normalize separator:
     QFileInfo fileInfo(QDir::toNativeSeparators(to_qstring(p_strPath)));
     QStringList paths = g_Organizer->findFiles(fileInfo.path(), [name = fileInfo.fileName()](QString const& filepath) {
@@ -246,19 +246,20 @@ namespace CSharp {
   }
 
   bool BaseScriptImpl::GenerateDataFile(String ^ p_strPath, array<Byte> ^ p_bteData) {
-    log::debug("GenerateDataFile({}, ...)", to_qstring(p_strPath));
-    if (g.createNewFileInOverwrite()) {
-      QString qAbsPath = QDir(g_Organizer->overwritePath()).filePath(to_qstring(p_strPath));
-      log::debug("Creating file {}.", qAbsPath);
-      String^ absPath = from_string(qAbsPath.toStdWString());
-      Directory::CreateDirectory(Path::GetDirectoryName(absPath));
-      File::WriteAllBytes(absPath, p_bteData);
-      g.CreatedFiles.push_back(to_qstring(p_strPath));
-      return true;
+
+    // Create the entry:
+    QString qPath = to_qstring(p_strPath);
+    auto entry = g.DestinationTree->addFile(qPath, true);
+
+    // Create the entry and the temporary file:
+    QString qAbsPath = g.InstallManager->createFile(entry);
+    if (qAbsPath.isEmpty()) {
+      return false;
     }
-    else {
-      throw gcnew NotImplementedException("GenerateDataFile");
-    }
+
+    String^ absPath = from_string(qAbsPath);
+    File::WriteAllBytes(absPath, p_bteData);
+    return true;
   }
 
   // UI methods:
