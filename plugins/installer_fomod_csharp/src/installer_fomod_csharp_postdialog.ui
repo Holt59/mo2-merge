@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>The installer needs to create new files (not from the archives) or edit the settings. This cannot be done automatically by Mod Organizer 2, so you will need to manually edit settings or move files from the overwrites folder. Below you can see the list of files created by the installer and the list of settings modified.</string>
+      <string>The installer needs to edit the following settings. You can either apply them, discard them or move them to the mod installation folder (under INI Tweaks).</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -26,9 +26,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QListWidget" name="listWidget"/>
-     </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
@@ -39,50 +36,64 @@
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyBtn">
+       <property name="toolTip">
+        <string>Apply the settings to the INI files corresponding to the current profile.</string>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="discardBtn">
+       <property name="toolTip">
+        <string>Discard the settings.</string>
+       </property>
+       <property name="text">
+        <string>Discard</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="moveBtn">
+       <property name="toolTip">
+        <string>Create files under &quot;INI Tweaks&quot; in the mod folder with these settings.</string>
+       </property>
+       <property name="text">
+        <string>INI Tweaks</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelBtn">
+       <property name="toolTip">
+        <string>Cancel the installation.</string>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>FomodCSharpPostDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>FomodCSharpPostDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

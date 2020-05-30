@@ -38,6 +38,7 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "scriptextender.h"
 
+#include "psettings.h"
 #include "installer_fomod_postdialog.h"
 #include "csharp_interface.h"
 #include "csharp_utils.h"
@@ -59,10 +60,7 @@ namespace CSharp {
     std::map<std::shared_ptr<const FileTreeEntry>, QString> ExtractedEntries;
 
     // List of modified settings values:
-    std::map<QString, std::map<std::pair<QString, QString>, QString>> Settings;
-
-    // List of creates files:
-    std::vector<QString> CreatedFiles;
+    std::map<QString, PSettings> Settings;
 
     Globals() { }
     Globals(
@@ -99,28 +97,71 @@ namespace CSharp {
     g = { plugin, manager, parentWidget, tree, std::move(entries) };
   }
 
-  std::shared_ptr<MOBase::IFileTree> afterInstall(bool success) {
-    auto tree = g.DestinationTree;
+  IPluginInstaller::EInstallResult afterInstall(bool success, std::shared_ptr<MOBase::IFileTree>& tree) {
 
-    if (success && !(g.Settings.empty() && g.CreatedFiles.empty())) {
+    if (success && !g.Settings.empty()) {
 
       InstallerFomodPostDialog* dialog = new InstallerFomodPostDialog(g.ParentWidget);
 
       dialog->setIniSettings(g.Settings);
 
-      for (QString file : g.CreatedFiles) {
-        dialog->addCreatedFile(file);
+      // Installation cancelled:
+      if (dialog->exec() == QDialog::Rejected) {
+        return IPluginInstaller::EInstallResult::RESULT_CANCELED;
       }
 
-      dialog->setModal(false);
-      dialog->show();
+      switch (dialog->result()) {
+
+      // Discard, nothing do to:
+      case InstallerFomodPostDialog::Result::DISCARD: break;
+
+      // Apply, must fetch the profile INI settings and apply the settings:
+      case InstallerFomodPostDialog::Result::APPLY: {
+        for (auto& p : g.Settings) {
+          QDir path(g_Organizer->profilePath());
+          if (!g_Organizer->profile()->localSettingsEnabled()) {
+            path = QDir(g_Organizer->managedGame()->documentsDirectory());
+          }
+
+          QSettings settings(path.filePath(p.first), QSettings::IniFormat);
+
+          if (settings.status() != QSettings::NoError) {
+            return IPluginInstaller::EInstallResult::RESULT_FAILED;
+          }
+
+          p.second.update(settings);
+        }
+      } break;
+
+      // Move, must create the INI files and apply the settings:
+      case InstallerFomodPostDialog::Result::MOVE: {
+        for (auto& p : g.Settings) {
+          auto e = g.DestinationTree->addFile("INI Tweaks/" + p.first, false);
+          if (e == nullptr) {
+            return IPluginInstaller::EInstallResult::RESULT_FAILED;
+          }
+          QString path = g.InstallManager->createFile(e);
+          if (path.isEmpty()) {
+            return IPluginInstaller::EInstallResult::RESULT_FAILED;
+          }
+          QSettings settings(path, QSettings::IniFormat);
+          if (settings.status() != QSettings::NoError) {
+            return IPluginInstaller::EInstallResult::RESULT_FAILED;
+          }
+          p.second.update(settings);
+        }
+      } break;
+      }
+
     }
+
+    tree = g.DestinationTree;
 
     // Clear up:
     g = Globals();
 
 
-    return tree;
+    return IPluginInstaller::EInstallResult::RESULT_SUCCESS;
   }
 
 }
@@ -472,9 +513,9 @@ namespace CSharp {
     // Check if we have already set this within this installation:
     auto fIt = g.Settings.find(to_qstring(settingsFileName));
     if (fIt != g.Settings.end()) {
-      auto it = fIt->second.find(std::make_pair(to_qstring(section), to_qstring(key)));
-      if (it != fIt->second.end()) {
-        return from_string(it->second.toStdString());
+      QString value = fIt->second.value(to_qstring(section), to_qstring(key));
+      if (!value.isEmpty()) {
+        return from_string(value);
       }
     }
 
@@ -520,7 +561,7 @@ namespace CSharp {
       return false;
     }
 
-    g.Settings[to_qstring(p_strSettingsFileName)].insert({ { to_qstring(p_strSection), to_qstring(p_strKey) }, to_qstring(p_strValue) });
+    g.Settings[to_qstring(p_strSettingsFileName)].setValue(to_qstring(p_strSection), to_qstring(p_strKey), to_qstring(p_strValue));
     return true;
   }
 

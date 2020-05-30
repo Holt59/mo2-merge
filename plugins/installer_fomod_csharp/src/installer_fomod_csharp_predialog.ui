@@ -50,10 +50,10 @@
      <item>
       <widget class="QPushButton" name="nccBtn">
        <property name="toolTip">
-        <string>Opens a Dialog that allows custom modifications.</string>
+        <string>Use the NCC installer instead of the built-in MO2 installer.</string>
        </property>
        <property name="whatsThis">
-        <string>Opens a Dialog that allows custom modifications.</string>
+        <string/>
        </property>
        <property name="text">
         <string>Use NCC</string>
@@ -77,19 +77,19 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelBtn">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="okBtn">
        <property name="text">
         <string>Start</string>
        </property>
        <property name="default">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelBtn">
+       <property name="text">
+        <string>Cancel</string>
        </property>
       </widget>
      </item>

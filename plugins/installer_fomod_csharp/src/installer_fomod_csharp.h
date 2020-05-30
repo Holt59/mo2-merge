@@ -41,11 +41,11 @@ public:
   }
 
   virtual QString description() const override {
-    return "Installer for FOMOD archive containing C# scripts.";
+    return tr("Installer for C# based FOMOD archives.");
   }
 
   virtual MOBase::VersionInfo version() const override {
-    return MOBase::VersionInfo(0, 0, 1, MOBase::VersionInfo::RELEASE_PREALPHA);
+    return MOBase::VersionInfo(1, 0, 0, MOBase::VersionInfo::RELEASE_BETA);
   }
 
   virtual bool isActive() const override {

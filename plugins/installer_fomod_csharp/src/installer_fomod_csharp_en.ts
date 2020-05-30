@@ -10,7 +10,47 @@
     </message>
     <message>
         <location filename="installer_fomod_csharp_postdialog.ui" line="20"/>
-        <source>The installer needs to create new files (not from the archives) or edit the settings. This cannot be done automatically by Mod Organizer 2, so you will need to manually edit settings or move files from the overwrites folder. Below you can see the list of files created by the installer and the list of settings modified.</source>
+        <source>The installer needs to edit the following settings. You can either apply them, discard them or move them to the mod installation folder (under INI Tweaks).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="56"/>
+        <source>Apply the settings to the INI files corresponding to the current profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="59"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="66"/>
+        <source>Discard the settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="69"/>
+        <source>Discard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="76"/>
+        <source>Create files under &quot;INI Tweaks&quot; in the mod folder with these settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="79"/>
+        <source>INI Tweaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="86"/>
+        <source>Cancel the installation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp_postdialog.ui" line="89"/>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -29,8 +69,6 @@
     <message>
         <location filename="installer_fomod_csharp_predialog.ui" line="40"/>
         <location filename="installer_fomod_csharp_predialog.ui" line="43"/>
-        <location filename="installer_fomod_csharp_predialog.ui" line="53"/>
-        <location filename="installer_fomod_csharp_predialog.ui" line="56"/>
         <source>Opens a Dialog that allows custom modifications.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -40,17 +78,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="installer_fomod_csharp_predialog.ui" line="53"/>
+        <source>Use the NCC installer instead of the built-in MO2 installer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="installer_fomod_csharp_predialog.ui" line="59"/>
         <source>Use NCC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installer_fomod_csharp_predialog.ui" line="82"/>
+        <location filename="installer_fomod_csharp_predialog.ui" line="92"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installer_fomod_csharp_predialog.ui" line="89"/>
+        <location filename="installer_fomod_csharp_predialog.ui" line="82"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
@@ -64,14 +107,22 @@
     </message>
 </context>
 <context>
+    <name>InstallerFomodCSharp</name>
+    <message>
+        <location filename="installer_fomod_csharp.h" line="44"/>
+        <source>Installer for C# based FOMOD archives.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="362"/>
+        <location filename="base_script.cpp" line="402"/>
         <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="365"/>
+        <location filename="base_script.cpp" line="405"/>
         <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>

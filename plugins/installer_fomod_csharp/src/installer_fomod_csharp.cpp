@@ -177,14 +177,12 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   }
   modName.update(dialog.getName(), GUESS_USER);
 
+  // entryToPath[scriptFile] = "I:\\Projects\\ModOrganizer2\\script2.cs";
+
   // Run the C# script:
   const QString scriptPath = entryToPath[scriptFile];
   CSharp::beforeInstall(this, manager(), parentWidget(), std::const_pointer_cast<IFileTree>(scriptFile->parent()->parent()), std::move(entryToPath));
   auto result = CSharp::executeCSharpScript(scriptPath);
-  auto newTree = CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS);
-  if (result == EInstallResult::RESULT_SUCCESS) {
-    tree = newTree;
-  }
 
-  return result;
+  return CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS, tree);
 }
