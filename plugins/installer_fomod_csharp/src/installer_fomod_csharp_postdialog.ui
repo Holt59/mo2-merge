@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Manual steps required</string>
+   <string>Settings modification required</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
