@@ -97,9 +97,9 @@ namespace CSharp {
     g = { plugin, manager, parentWidget, tree, std::move(entries) };
   }
 
-  IPluginInstaller::EInstallResult afterInstall(bool success, std::shared_ptr<MOBase::IFileTree>& tree) {
+  IPluginInstaller::EInstallResult postInstall(std::shared_ptr<MOBase::IFileTree>& tree) {
 
-    if (success && !g.Settings.empty()) {
+    if (!g.Settings.empty()) {
 
       InstallerFomodPostDialog* dialog = new InstallerFomodPostDialog(g.ParentWidget);
 

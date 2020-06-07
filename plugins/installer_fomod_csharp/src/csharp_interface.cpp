@@ -108,7 +108,7 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
 
 namespace CSharp {
 
-  IPluginInstaller::EInstallResult executeCSharpScript(QString scriptPath) {
+  IPluginInstaller::EInstallResult executeCSharpScript(QString scriptPath, std::shared_ptr<IFileTree> &tree) {
 
     using namespace System;
     using namespace System::IO;
@@ -150,7 +150,7 @@ namespace CSharp {
       return result;
     }
 
-    return IPluginInstaller::EInstallResult::RESULT_SUCCESS;
+    return postInstall(tree);
   }
 
 }

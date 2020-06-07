@@ -182,7 +182,5 @@ InstallerFomodCSharp::EInstallResult InstallerFomodCSharp::install(MOBase::Guess
   // Run the C# script:
   const QString scriptPath = entryToPath[scriptFile];
   CSharp::beforeInstall(this, manager(), parentWidget(), std::const_pointer_cast<IFileTree>(scriptFile->parent()->parent()), std::move(entryToPath));
-  auto result = CSharp::executeCSharpScript(scriptPath);
-
-  return CSharp::afterInstall(result == EInstallResult::RESULT_SUCCESS, tree);
+  return CSharp::executeCSharpScript(scriptPath, tree);
 }

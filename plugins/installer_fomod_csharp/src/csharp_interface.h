@@ -29,14 +29,12 @@ namespace CSharp {
   /**
    * @brief Clear the C# interface after an installation.
    *
-   * @param success true if the installation succeed, false otherwize.
-   * @param tree The tree to update.
+   * @param scriptPath Path to the script to execute.
+   * @param tree Reference where the final tree will be stored (in case of success.
    *
    * @return the installation result after performing post-installation.
    */
-  MOBase::IPluginInstaller::EInstallResult afterInstall(bool success, std::shared_ptr<MOBase::IFileTree> &tree);
-
-  MOBase::IPluginInstaller::EInstallResult executeCSharpScript(QString scriptPath);
+  MOBase::IPluginInstaller::EInstallResult executeCSharpScript(QString scriptPath, std::shared_ptr<MOBase::IFileTree>& tree);
 
 }
 #endif

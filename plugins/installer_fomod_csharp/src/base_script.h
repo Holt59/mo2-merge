@@ -22,6 +22,8 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #using <System.Drawing.dll>
 #using <System.Windows.Forms.dll>
 
+#include <iplugininstaller.h>
+
 /**
  * Note: The specification of BaseScript where taken from the Nexus-Mods installer_fomod extension
  * for Vortex: https://github.com/Nexus-Mods/fomod-installer
@@ -532,6 +534,11 @@ namespace CSharp {
     }
 
   };
+
+  /**
+   * @brief Post-install script.
+   */
+  MOBase::IPluginInstaller::EInstallResult postInstall(std::shared_ptr<MOBase::IFileTree>& tree);
 }
 
 // BaseScript cannot be in a namespace:
