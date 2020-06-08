@@ -55,8 +55,7 @@ public:
   virtual QList<MOBase::PluginSetting> settings() const override {
     return {
       MOBase::PluginSetting("enabled", "check to enable this plugin", QVariant(true)),
-      MOBase::PluginSetting("prefer", "prefer this over the NCC based plugin", QVariant(true)),
-      MOBase::PluginSetting("create_in_overwrite", "generate files in overwrite folder instead of failing", QVariant(true))
+      MOBase::PluginSetting("prefer", "prefer this over the NCC based plugin", QVariant(true))
     };
   }
 

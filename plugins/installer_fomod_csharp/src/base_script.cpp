@@ -70,11 +70,6 @@ namespace CSharp {
 
     }
 
-    /**
-     * @return true if files should be created in overwrites folder, false to fail. 
-     */
-    bool createNewFileInOverwrite() const { return g_Organizer->pluginSetting(m_Plugin->name(), "create_in_overwrite").toBool(); }
-
     Globals(Globals const&) = delete;
     Globals(Globals&&) = default;
 
