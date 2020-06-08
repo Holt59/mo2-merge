@@ -5,7 +5,8 @@
     <name>FomodCSharpPostDialog</name>
     <message>
         <location filename="installer_fomod_csharp_postdialog.ui" line="14"/>
-        <source>Manual steps required</source>
+        <source>Settings modification required</source>
+        <oldsource>Manual steps required</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -117,12 +118,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="400"/>
+        <location filename="base_script.cpp" line="395"/>
         <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="403"/>
+        <location filename="base_script.cpp" line="398"/>
         <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>
