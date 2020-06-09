@@ -17,6 +17,7 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "base_script.h"
 
+#include <filesystem>
 #include <map>
 
 #include <QMessageBox>
@@ -57,7 +58,14 @@ namespace CSharp {
     std::shared_ptr<const IFileTree> SourceTree;
     std::shared_ptr<IFileTree> DestinationTree;
 
+    // Map from path in the destination entry to the original entry:
+    std::map<QString, std::shared_ptr<const FileTreeEntry>> InstalledEntries;
+
+    // Map extracted entries (in the original tree) to (temporary) paths:
     std::map<std::shared_ptr<const FileTreeEntry>, QString> ExtractedEntries;
+
+    // Map creted entries (in the destination tree) to (temporary) paths:
+    std::map<std::shared_ptr<const FileTreeEntry>, QString> CreatedEntries;
 
     // List of modified settings values:
     std::map<QString, PSettings> Settings;
@@ -186,7 +194,12 @@ namespace CSharp {
       return false;
     }
 
-    return g.DestinationTree->copy(sourceEntry, to_qstring(p_strTo));
+    if (!g.DestinationTree->copy(sourceEntry, to_qstring(p_strTo))) {
+      return false;
+    }
+
+    g.InstalledEntries[to_qstring(p_strTo)] = sourceEntry;
+    return true;
   }
 
   array<String^>^ BaseScriptImpl::GetModFileList() {
@@ -210,6 +223,35 @@ namespace CSharp {
     return result;
   }
 
+
+  /**
+   * @brief Extract the given entry.
+   *
+   * If the entry has already been extracted, the existing paths is returned.
+   *
+   * @param entry The entry to extract.
+   *
+   * @return path to the temporary file corresponding to the entry.
+   */
+  QString extractFile(std::shared_ptr<const FileTreeEntry> entry) {
+
+    QString qPath;
+    if (auto it = g.ExtractedEntries.find(entry); it != g.ExtractedEntries.end()) {
+      qPath = it->second;
+    }
+    else {
+      qPath = g.InstallManager->extractFile(entry, true);
+
+      if (qPath.isEmpty()) {
+        return QString();
+      }
+
+      g.ExtractedEntries[entry] = qPath;
+    }
+
+    return qPath;
+  }
+
   array<Byte>^ BaseScriptImpl::GetFileFromMod(String^ p_strFile) {
     auto entry = g.SourceTree->find(to_qstring(p_strFile));
 
@@ -217,14 +259,7 @@ namespace CSharp {
       return gcnew array<Byte>(0);
     }
 
-    QString qPath;
-    if (auto it = g.ExtractedEntries.find(entry); it != g.ExtractedEntries.end()) {
-      qPath = it->second;
-    }
-    else {
-      qPath = g.InstallManager->extractFile(entry);
-    }
-    
+    QString qPath = extractFile(entry);
     if (qPath.isEmpty()) {
       return gcnew array<Byte>(0);
     }
@@ -260,15 +295,41 @@ namespace CSharp {
     return result;
   }
 
-  bool BaseScriptImpl::DataFileExists(String^ p_strPath) {
-    return GetExistingDataFile(p_strPath) != nullptr;
-  }
+  /**
+   * @brief Find the data-file path corresponding to the given path.
+   *
+   * This methods first lookup the file in the destination tree of the mod (for files
+   * that have been extracted / created by the mod), and if it does not find it there
+   * lookup files from other mods.
+   *
+   * @param p_strPath Path to the file to lookup, relative to the data folder.
+   *
+   * @return a path to an actual corresponding file, or a null pointer if the
+   *   file was not found.
+   */
+  String^ getDataFilePath(String^ p_strPath) {
+    
+    // Check if the file is in the output tree:
+    QString qPath = to_qstring(p_strPath);
+    if (auto e = g.DestinationTree->find(qPath); e != nullptr) {
+        
+      // Check if it's a created entry:
+      if (auto it = g.CreatedEntries.find(e); it != g.CreatedEntries.end()) {
+        return from_string(g.CreatedEntries[e]);
+      }
 
-  array<Byte>^ BaseScriptImpl::GetExistingDataFile(String^ p_strPath) {
+      // Find the source entry:
+      auto se = g.InstalledEntries.at(qPath);
+      QString path = extractFile(se);
+      if (path.isEmpty()) {
+        return nullptr;
+      }
+      return from_string(path);
+    }
 
-    // Convert to QString and normalize separator:
-    QFileInfo fileInfo(QDir::toNativeSeparators(to_qstring(p_strPath)));
-    QStringList paths = g_Organizer->findFiles(fileInfo.path(), [name = fileInfo.fileName()](QString const& filepath) {
+    // Convert to path and normalize separator:
+    auto path = std::filesystem::path(qPath.toStdWString()).make_preferred();
+    QStringList paths = g_Organizer->findFiles(ToQString(path.parent_path().native()), [name = ToQString(path.filename())](QString const& filepath) {
       return QFileInfo(filepath).fileName().compare(name, Qt::CaseInsensitive) == 0;
     });
 
@@ -276,21 +337,48 @@ namespace CSharp {
       return nullptr;
     }
 
-    // Read the first file (should be only one):
-    String^ path = msclr::interop::marshal_as<String^>(paths[0].toStdWString());
-    return File::ReadAllBytes(path);
+    return from_string(paths[0]);
   }
 
-  bool BaseScriptImpl::GenerateDataFile(String ^ p_strPath, array<Byte> ^ p_bteData) {
+  bool BaseScriptImpl::DataFileExists(String^ p_strPath) {
+    return getDataFilePath(p_strPath) != nullptr;
+  }
 
-    // Create the entry:
+  array<Byte>^ BaseScriptImpl::GetExistingDataFile(String^ p_strPath) {
+
+    // Convert to path and normalize separator:
+    String^ datapath = getDataFilePath(p_strPath);
+
+    if (datapath == nullptr) {
+      return nullptr;
+    }
+
+    // Read the first file (should be only one):
+    return File::ReadAllBytes(datapath);
+  }
+
+  bool BaseScriptImpl::GenerateDataFile(String^ p_strPath, array<Byte>^ p_bteData) {
+
+    // Check if we already have created an entry for this:
     QString qPath = to_qstring(p_strPath);
-    auto entry = g.DestinationTree->addFile(qPath, true);
+    auto entry = g.DestinationTree->find(qPath);
 
-    // Create the entry and the temporary file:
-    QString qAbsPath = g.InstallManager->createFile(entry);
-    if (qAbsPath.isEmpty()) {
-      return false;
+    QString qAbsPath;
+    // If the entry is in the list of created files (note: if the entry does not exist,
+    // find return a nullptr, which is never in g.CreatedEntries).
+    if (auto it = g.CreatedEntries.find(entry); it != g.CreatedEntries.end()) {
+      qAbsPath = g.CreatedEntries.at(entry);
+    }
+    // Otherwize: Create the entry and the temporary file:
+    else {
+      auto entry = g.DestinationTree->addFile(qPath, true);
+      qAbsPath = g.InstallManager->createFile(entry);
+      if (qAbsPath.isEmpty()) {
+        return false;
+      }
+
+      // Store the created entry:
+      g.CreatedEntries[entry] = qAbsPath;
     }
 
     String^ absPath = from_string(qAbsPath);

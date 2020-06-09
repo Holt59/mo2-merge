@@ -118,12 +118,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="395"/>
+        <location filename="base_script.cpp" line="483"/>
         <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="398"/>
+        <location filename="base_script.cpp" line="486"/>
         <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>
