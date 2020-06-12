@@ -58,8 +58,9 @@ namespace CSharp {
     std::shared_ptr<const IFileTree> SourceTree;
     std::shared_ptr<IFileTree> DestinationTree;
 
-    // Map from path in the destination entry to the original entry:
-    std::map<QString, std::shared_ptr<const FileTreeEntry>> InstalledEntries;
+    // Map from path in destination entry to the original entry:
+    std::map<std::shared_ptr<const FileTreeEntry>, 
+      std::shared_ptr<const FileTreeEntry>> InstalledEntries;
 
     // Map extracted entries (in the original tree) to (temporary) paths:
     std::map<std::shared_ptr<const FileTreeEntry>, QString> ExtractedEntries;
@@ -180,7 +181,8 @@ namespace CSharp {
   bool BaseScriptImpl::PerformBasicInstall() {
     for (auto e: *g.SourceTree) {
       if (!isFomodEntry(e)) {
-        g.DestinationTree->copy(e, "", IFileTree::InsertPolicy::MERGE);
+        auto ce = g.DestinationTree->copy(e, "", IFileTree::InsertPolicy::MERGE);
+        g.InstalledEntries[ce] = e;
       }
     }
     return true;
@@ -194,12 +196,12 @@ namespace CSharp {
       return false;
     }
 
-    if (!g.DestinationTree->copy(sourceEntry, to_qstring(p_strTo))) {
-      return false;
+    if (auto ce = g.DestinationTree->copy(sourceEntry, to_qstring(p_strTo)); ce != nullptr) {
+      g.InstalledEntries[ce] = sourceEntry;
+      return true;
     }
 
-    g.InstalledEntries[to_qstring(p_strTo)] = sourceEntry;
-    return true;
+    return false;
   }
 
   array<String^>^ BaseScriptImpl::GetModFileList() {
@@ -318,9 +320,26 @@ namespace CSharp {
         return from_string(g.CreatedEntries[e]);
       }
 
-      // Find the source entry:
-      auto se = g.InstalledEntries.at(qPath);
-      QString path = extractFile(se);
+      // Find the source entry - We need to check for parent:
+      std::shared_ptr<const FileTreeEntry> originalEntry;
+      if (auto it = g.InstalledEntries.find(e); it != g.InstalledEntries.end()) {
+        originalEntry = it->second;
+      }
+      else {
+        std::shared_ptr<const IFileTree> tree = e->parent();
+        decltype(tree) oTree = nullptr;
+        while (oTree == nullptr && tree != nullptr) {
+          auto it = g.InstalledEntries.find(tree);
+          if (it != g.InstalledEntries.end()) {
+            oTree = it->second->astree();
+          }
+          else {
+            tree = tree->parent();
+          }
+        }
+        originalEntry = oTree->find(e->pathFrom(tree));
+      }
+      QString path = extractFile(originalEntry);
       if (path.isEmpty()) {
         return nullptr;
       }
@@ -374,6 +393,8 @@ namespace CSharp {
       auto entry = g.DestinationTree->addFile(qPath, true);
       qAbsPath = g.InstallManager->createFile(entry);
       if (qAbsPath.isEmpty()) {
+        // Remove the entry from the tree:
+        entry->detach();
         return false;
       }
 

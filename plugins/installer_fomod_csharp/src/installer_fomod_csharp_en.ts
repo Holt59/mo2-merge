@@ -6,7 +6,6 @@
     <message>
         <location filename="installer_fomod_csharp_postdialog.ui" line="14"/>
         <source>Settings modification required</source>
-        <oldsource>Manual steps required</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -89,13 +88,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installer_fomod_csharp_predialog.ui" line="92"/>
-        <source>Cancel</source>
+        <location filename="installer_fomod_csharp_predialog.ui" line="82"/>
+        <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installer_fomod_csharp_predialog.ui" line="82"/>
-        <source>Start</source>
+        <location filename="installer_fomod_csharp_predialog.ui" line="92"/>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -118,12 +117,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="base_script.cpp" line="483"/>
+        <location filename="base_script.cpp" line="504"/>
         <source>Choose any:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="base_script.cpp" line="486"/>
+        <location filename="base_script.cpp" line="507"/>
         <source>Choose one:</source>
         <translation type="unfinished"></translation>
     </message>
