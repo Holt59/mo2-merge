@@ -136,9 +136,12 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &
 {
   const QString dataFolderName = m_MOInfo->managedGame()->dataDirectory().dirName();
   ModDataChecker* checker = m_MOInfo->managedGame()->feature<ModDataChecker>();
-  tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, dataFolderName, checker));
+
   if (m_NeedFix) {
     tree = checker->fix(tree);
+  }
+  else {
+    tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, dataFolderName, checker));
   }
   if (tree != nullptr) {
     SimpleInstallDialog dialog(modName, parentWidget());
