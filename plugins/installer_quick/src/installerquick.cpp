@@ -103,7 +103,7 @@ std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(
     return nullptr;
   }
   while (true) {
-    if (checker->dataLooksValid(dataTree) ||
+    if (checker->dataLooksValid(dataTree) == ModDataChecker::CheckReturn::VALID ||
         isDataTextArchiveTopLayer(dataTree, dataFolderName, checker)) {
       return dataTree;
     } else if (dataTree->size() == 1 && dataTree->at(0)->isDir()) {
@@ -118,7 +118,16 @@ std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(
 
 bool InstallerQuick::isArchiveSupported(std::shared_ptr<const IFileTree> tree) const
 {
-  return getSimpleArchiveBase(tree, m_MOInfo->managedGame()->dataDirectory().dirName(), m_MOInfo->managedGame()->feature<ModDataChecker>()) != nullptr;
+  m_NeedFix = false;
+  ModDataChecker* checker = m_MOInfo->managedGame()->feature<ModDataChecker>();
+  if (!checker) {
+    return false;
+  }
+  if (getSimpleArchiveBase(tree, m_MOInfo->managedGame()->dataDirectory().dirName(), checker) != nullptr) {
+    return true;
+  }
+  m_NeedFix = checker->dataLooksValid(tree) == ModDataChecker::CheckReturn::FIXABLE;
+  return m_NeedFix;
 }
 
 
@@ -128,6 +137,9 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString> &
   const QString dataFolderName = m_MOInfo->managedGame()->dataDirectory().dirName();
   ModDataChecker* checker = m_MOInfo->managedGame()->feature<ModDataChecker>();
   tree = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, dataFolderName, checker));
+  if (m_NeedFix) {
+    tree = checker->fix(tree);
+  }
   if (tree != nullptr) {
     SimpleInstallDialog dialog(modName, parentWidget());
     if (m_MOInfo->pluginSetting(name(), "silent").toBool() || dialog.exec() == QDialog::Accepted) {

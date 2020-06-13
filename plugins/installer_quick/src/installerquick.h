@@ -71,6 +71,8 @@ private:
 
   const MOBase::IOrganizer *m_MOInfo;
 
+  // The fixed tree:
+  mutable bool m_NeedFix = false;
 };
 
 #endif // INSTALLERQUICK_H
