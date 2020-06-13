@@ -94,6 +94,9 @@ namespace CSharp {
 
   void init(MOBase::IOrganizer* moInfo) {
     g_Organizer = moInfo;
+  
+    Application::EnableVisualStyles();
+    Application::SetCompatibleTextRenderingDefault(false);
   }
 
   void beforeInstall(IPlugin const* plugin, MOBase::IInstallationManager* manager, QWidget* parentWidget, 

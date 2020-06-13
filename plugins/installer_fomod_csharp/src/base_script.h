@@ -314,7 +314,6 @@ namespace CSharp {
     /// <returns>A form that can be used in custom mod scripts.</returns>
     static Form^ CreateCustomForm() {
       Form^ form = gcnew Form;
-      form->TopMost = true;
       return form;
     }
 
