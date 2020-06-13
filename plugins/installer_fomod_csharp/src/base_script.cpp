@@ -212,7 +212,9 @@ namespace CSharp {
       if (isFomodEntry(entry)) {
         return IFileTree::WalkReturn::SKIP;
       }
-      paths.push_back(path + entry->name());
+      if (entry->isFile()) {
+        paths.push_back(path + entry->name());
+      }
       return IFileTree::WalkReturn::CONTINUE;
     }, "/");
 
