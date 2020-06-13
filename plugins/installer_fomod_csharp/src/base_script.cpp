@@ -49,7 +49,7 @@ using namespace MOBase;
 namespace CSharp {
 
   // Pointer to object:
-  static MOBase::IOrganizer* g_Organizer;
+  static MOBase::IOrganizer* g_Organizer = nullptr;
 
   // Per-install globals:
   struct Globals {
@@ -93,10 +93,14 @@ namespace CSharp {
 
 
   void init(MOBase::IOrganizer* moInfo) {
+
+    // Do this only once:
+    if (g_Organizer == nullptr) {
+      Application::EnableVisualStyles();
+      Application::SetCompatibleTextRenderingDefault(false);
+    }
+
     g_Organizer = moInfo;
-  
-    Application::EnableVisualStyles();
-    Application::SetCompatibleTextRenderingDefault(false);
   }
 
   void beforeInstall(IPlugin const* plugin, MOBase::IInstallationManager* manager, QWidget* parentWidget, 
