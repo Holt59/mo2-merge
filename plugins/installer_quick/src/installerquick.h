@@ -70,7 +70,6 @@ private:
 private:
 
   const MOBase::IOrganizer *m_MOInfo;
-
 };
 
 #endif // INSTALLERQUICK_H
