@@ -4,7 +4,7 @@
 <context>
     <name>InstallerQuick</name>
     <message>
-        <location filename="installerquick.cpp" line="35"/>
+        <location filename="installerquick.cpp" line="39"/>
         <source>Installer for very simple archives</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22,13 +22,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="simpleinstalldialog.ui" line="53"/>
-        <location filename="simpleinstalldialog.ui" line="56"/>
+        <location filename="simpleinstalldialog.ui" line="40"/>
+        <location filename="simpleinstalldialog.ui" line="43"/>
         <source>Opens a Dialog that allows custom modifications.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="simpleinstalldialog.ui" line="59"/>
+        <location filename="simpleinstalldialog.ui" line="46"/>
         <source>Manual</source>
         <translation type="unfinished"></translation>
     </message>
