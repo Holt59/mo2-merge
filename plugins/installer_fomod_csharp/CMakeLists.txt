@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(installer_fomod_csharp)
 set(project_type plugin)
 set(enable_warnings OFF)
+set(enable_cli ON)
 
 add_compile_options("/Zc:twoPhase-")
 
