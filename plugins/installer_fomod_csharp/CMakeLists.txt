@@ -14,5 +14,4 @@ else()
 endif()
 add_subdirectory(src)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-	CXX_STANDARD 17
-	COMMON_LANGUAGE_RUNTIME "")
+	CXX_STANDARD 17)
