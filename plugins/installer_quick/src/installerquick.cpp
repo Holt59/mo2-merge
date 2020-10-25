@@ -73,8 +73,10 @@ bool InstallerQuick::isDataTextArchiveTopLayer(
   std::shared_ptr<const IFileTree> tree, QString const& dataFolderName, ModDataChecker* checker) const
 {
   // A "DataText" archive is defined as having exactly one folder named like `dataFolderName`
-  // and one or more text or PDF files (standard package from french modding site).
-  static const std::set<QString, FileNameComparator> txtExtensions{ "txt", "pdf" };
+  // and one or more "useless" files (text files, pdf, or images).
+  static const std::set<QString, FileNameComparator> txtExtensions{
+    "txt", "pdf", "md", "jpg", "jpeg", "png", "bmp"
+  };
   bool dataFound = false;
   bool txtFound = false;
   for (auto entry : *tree) {
