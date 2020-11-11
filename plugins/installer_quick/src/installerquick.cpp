@@ -29,6 +29,11 @@ QString InstallerQuick::name() const
   return "Simple Installer";
 }
 
+QString InstallerQuick::localizedName() const
+{
+  return tr("Simple Installer");
+}
+
 QString InstallerQuick::author() const
 {
   return "Tannin";
@@ -44,17 +49,11 @@ VersionInfo InstallerQuick::version() const
   return VersionInfo(1, 3, 0, VersionInfo::RELEASE_FINAL);
 }
 
-bool InstallerQuick::isActive() const
-{
-  return m_MOInfo->pluginSetting(name(), "enabled").toBool();
-}
-
 QList<PluginSetting> InstallerQuick::settings() const
 {
-  QList<PluginSetting> result;
-  result.push_back(PluginSetting("enabled", "check to enable this plugin", QVariant(true)));
-  result.push_back(PluginSetting("silent", "simple plugins will be installed without any user interaction", QVariant(false)));
-  return result;
+  return {
+    PluginSetting("silent", "simple plugins will be installed without any user interaction", QVariant(false))
+  };
 }
 
 unsigned int InstallerQuick::priority() const
