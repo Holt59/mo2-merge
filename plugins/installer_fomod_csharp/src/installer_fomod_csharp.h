@@ -36,6 +36,10 @@ public:
     return "Fomod Installer C#";
   }
 
+  virtual QString localizedName() const override {
+    return tr("Fomod Installer C#");
+  }
+
   virtual QString author() const override {
     return "Holt59";
   }
@@ -46,10 +50,6 @@ public:
 
   virtual MOBase::VersionInfo version() const override {
     return MOBase::VersionInfo(1, 0, 0, MOBase::VersionInfo::RELEASE_BETA);
-  }
-
-  virtual bool isActive() const override {
-    return m_MOInfo->pluginSetting(name(), "enabled").toBool();
   }
 
   virtual QList<MOBase::PluginSetting> settings() const override {
