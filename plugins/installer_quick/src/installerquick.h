@@ -17,12 +17,12 @@ public:
   InstallerQuick();
 
   // Plugin functions:
-  virtual bool init(MOBase::IOrganizer *moInfo) override;
+  virtual bool init(MOBase::IOrganizer* moInfo) override;
   virtual QString name() const override;
+  virtual QString localizedName() const override;
   virtual QString author() const override;
   virtual QString description() const override;
   virtual MOBase::VersionInfo version() const override;
-  virtual bool isActive() const override;
   virtual QList<MOBase::PluginSetting> settings() const override;
 
   // Installer functions:
