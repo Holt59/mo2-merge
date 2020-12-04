@@ -14,7 +14,7 @@
 using namespace MOBase;
 
 /**
- * This is a assembly resolve handler that does only one thing: returns the assembly 
+ * This is a assembly resolve handler that does only one thing: returns the assembly
  * containing BaseScript (usually the DLL) when requested.
  *
  * I don't know why this must be done manually... But I did not find any better solution.
@@ -95,15 +95,15 @@ IPluginInstaller::EInstallResult executeScript(System::String^ script) {
     auto success = (bool)(onActivateMethod->IsStatic ? onActivateMethod->Invoke(nullptr, nullptr) : onActivateMethod->Invoke(scriptObject, nullptr));
     return success ? IPluginInstaller::EInstallResult::RESULT_SUCCESS : IPluginInstaller::EInstallResult::RESULT_CANCELED;
   }
-  catch (Exception^ ex) {
+  catch (System::Exception^ ex) {
     log::error("C# ({}): {}\n{}", CSharp::to_string(ex->GetType()->FullName), CSharp::to_string(ex->Message), CSharp::to_string(ex->StackTrace));
-    Exception^ innerEx = ex->InnerException;
+    System::Exception^ innerEx = ex->InnerException;
     if (innerEx) {
       log::error("C# ({}): {}\n{}", CSharp::to_string(innerEx->GetType()->FullName), CSharp::to_string(innerEx->Message), CSharp::to_string(innerEx->StackTrace));
     }
     return IPluginInstaller::EInstallResult::RESULT_FAILED;
   }
- 
+
 }
 
 namespace CSharp {
@@ -117,13 +117,13 @@ namespace CSharp {
     // Note: Using C# stuff here to mimicate NMM since there are some encoding issues, and
     // some regex do not work in C++:
     array<Byte>^ scriptBytes = File::ReadAllBytes(from_string(scriptPath.toStdWString()));
-    
+
     // Read the script (using C# to "auto-detect" encoding in a C# way):
     String^ script;
     {
       auto memoryStream = gcnew MemoryStream(scriptBytes);
       auto reader = gcnew StreamReader(memoryStream, true);
-    
+
       script = reader->ReadToEnd();
 
       reader->Close();

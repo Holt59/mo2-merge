@@ -19,8 +19,8 @@ struct FomodInfoReader: QObject {
 
 public:
 
-  struct XmlParseError : MOBase::MOException {
-    XmlParseError(const QString& message): MOException(message) {}
+  struct XmlParseError : MOBase::Exception {
+    XmlParseError(const QString& message): MOBase::Exception(message) {}
   };
 
   static QByteArray skipXmlHeader(QIODevice& file)
