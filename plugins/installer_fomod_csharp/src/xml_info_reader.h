@@ -19,8 +19,8 @@ struct FomodInfoReader: QObject {
 
 public:
 
-  struct XmlParseError : MOBase::MyException {
-    XmlParseError(const QString& message): MyException(message) {}
+  struct XmlParseError : MOBase::MOException {
+    XmlParseError(const QString& message): MOException(message) {}
   };
 
   static QByteArray skipXmlHeader(QIODevice& file)
@@ -102,7 +102,7 @@ public:
         MOBase::log::debug("Not {}: {}.", encoding, e.what());
       }
     }
-    
+
     throw XmlParseError(tr("Failed to parse %1. See console for details.").arg(file.fileName()));
   }
 
