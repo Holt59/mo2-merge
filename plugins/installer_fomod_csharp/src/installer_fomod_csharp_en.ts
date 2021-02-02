@@ -109,7 +109,12 @@
 <context>
     <name>InstallerFomodCSharp</name>
     <message>
-        <location filename="installer_fomod_csharp.h" line="44"/>
+        <location filename="installer_fomod_csharp.h" line="40"/>
+        <source>Fomod Installer C#</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installer_fomod_csharp.h" line="48"/>
         <source>Installer for C# based FOMOD archives.</source>
         <translation type="unfinished"></translation>
     </message>
