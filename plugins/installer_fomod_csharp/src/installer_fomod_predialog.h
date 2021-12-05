@@ -5,6 +5,8 @@
 
 #include "guessedvalue.h"
 
+#include <QCompleter>
+
 
 /**
  * @brief Dialog for the installation of a simple archive
@@ -33,7 +35,7 @@ public:
 
     ui->nameCombo->setCurrentIndex(ui->nameCombo->findText(preset));
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    ui->nameCombo->setAutoCompletionCaseSensitivity(Qt::CaseSensitive);
+    ui->nameCombo->completer()->setCaseSensitivity(Qt::CaseSensitive);
   }
 
   ~InstallerFomodPredialog() { }

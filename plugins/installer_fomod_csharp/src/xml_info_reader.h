@@ -37,25 +37,25 @@ public:
     QTextStream stream(&file);
     int bom = 0;
     if (rawBytes.startsWith((const char*)UTF16LE_BOM)) {
-      stream.setCodec("UTF16-LE");
+      stream.setEncoding(QStringEncoder::Encoding::Utf16LE);
       bom = 2;
     }
     else if (rawBytes.startsWith((const char*)UTF16BE_BOM)) {
-      stream.setCodec("UTF16-BE");
+      stream.setEncoding(QStringEncoder::Encoding::Utf16BE);
       bom = 2;
     }
     else if (rawBytes.startsWith((const char*)UTF8_BOM)) {
-      stream.setCodec("UTF-8");
+      stream.setEncoding(QStringEncoder::Encoding::Utf8);
       bom = 3;
     }
     else if (rawBytes.startsWith(QByteArray((const char*)UTF16LE, 4))) {
-      stream.setCodec("UTF16-LE");
+      stream.setEncoding(QStringEncoder::Encoding::Utf16LE);
     }
     else if (rawBytes.startsWith(QByteArray((const char*)UTF16BE, 4))) {
-      stream.setCodec("UTF16-BE");
+      stream.setEncoding(QStringEncoder::Encoding::Utf16BE);
     }
     else if (rawBytes.startsWith(QByteArray((const char*)UTF8, 4))) {
-      stream.setCodec("UTF-8");
+      stream.setEncoding(QStringEncoder::Encoding::Utf8);
     } // otherwise maybe the textstream knows the encoding?
 
     stream.seek(bom);
@@ -112,18 +112,18 @@ public:
     while (!reader.atEnd()) {
       switch (reader.readNext()) {
       case QXmlStreamReader::StartElement: {
-        if (reader.name() == "Name") {
+        if (reader.name().toString() == "Name") {
           std::get<0>(info) = reader.readElementText();
         }
-        else if (reader.name() == "Author") {
+        else if (reader.name().toString() == "Author") {
         }
-        else if (reader.name() == "Version") {
+        else if (reader.name().toString() == "Version") {
           std::get<2>(info) = reader.readElementText();
         }
-        else if (reader.name() == "Id") {
+        else if (reader.name().toString() == "Id") {
           std::get<1>(info) = reader.readElementText().toInt();
         }
-        else if (reader.name() == "Website") {
+        else if (reader.name().toString() == "Website") {
         }
       } break;
       default: {} break;
