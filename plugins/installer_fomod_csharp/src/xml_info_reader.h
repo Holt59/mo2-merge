@@ -6,7 +6,6 @@
 #include <QXmlStreamReader>
 #include <QTextStream>
 #include <QFile>
-#include <QTextCodec>
 
 #include "utility.h"
 #include "log.h"
@@ -73,7 +72,7 @@ public:
   static auto readXml(QFile& file, Fn &&fn)
   {
     // List of encodings to try:
-    static const std::vector<const char*> encodings{ "utf-16", "utf-8", "iso-8859-1" };
+    static const std::vector<QStringConverter::Encoding> encodings{ QStringConverter::Utf16, QStringConverter::Utf8, QStringConverter::Latin1 };
 
     std::string errorMessage;
     try {
@@ -91,15 +90,15 @@ public:
 
     // try parsing the file with several encodings to support broken files
     for (auto encoding : encodings) {
-      MOBase::log::debug("Trying encoding {} for {}... ", encoding, file.fileName());
+      MOBase::log::debug("Trying encoding {} for {}... ", QStringConverter::nameForEncoding(encoding), file.fileName());
       try {
-        QTextCodec* codec = QTextCodec::codecForName(encoding);
-        QXmlStreamReader reader(codec->fromUnicode(QString("<?xml version=\"1.0\" encoding=\"%1\" ?>").arg(encoding)) + headerlessData);
-        MOBase::log::debug("Interpreting {} as {}.", file.fileName(), encoding);
+        QStringEncoder encoder(encoding);
+        QXmlStreamReader reader(encoder.encode(QString("<?xml version=\"1.0\" encoding=\"%1\" ?>").arg(encoder.name())) + headerlessData);
+        MOBase::log::debug("Interpreting {} as {}.", file.fileName(), encoder.name());
         return fn(reader);
       }
       catch (const XmlParseError& e) {
-        MOBase::log::debug("Not {}: {}.", encoding, e.what());
+        MOBase::log::debug("Not {}: {}.", QStringConverter::nameForEncoding(encoding), e.what());
       }
     }
 
