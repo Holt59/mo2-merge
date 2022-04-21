@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(installer_fomod)
+project(installer_fomod_csharp)
 
 if(DEFINED DEPENDENCIES_DIR)
 	include(${DEPENDENCIES_DIR}/modorganizer_super/cmake_common/mo2.cmake)
