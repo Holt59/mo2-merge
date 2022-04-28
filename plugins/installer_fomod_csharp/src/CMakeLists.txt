@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
-if(DEFINED DEPENDENCIES_DIR)
-	include(${DEPENDENCIES_DIR}/modorganizer_super/cmake_common/src.cmake)
-else()
-	include(../../cmake_common/src.cmake)
-endif()
-requires_project(game_features)
+
+add_library(installer_fomod_csharp SHARED)
+mo2_configure_plugin(installer_fomod_csharp WARNINGS OFF CLI ON)
+mo2_install_target(installer_fomod_csharp)
+
+target_compile_options(installer_fomod_csharp PRIVATE "/Zc:twoPhase-")
+set_target_properties(installer_fomod_csharp PROPERTIES CXX_STANDARD 17)
