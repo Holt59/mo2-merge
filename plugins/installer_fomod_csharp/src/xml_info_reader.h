@@ -6,6 +6,7 @@
 #include <QXmlStreamReader>
 #include <QTextStream>
 #include <QFile>
+#include <QStringEncoder>
 
 #include "utility.h"
 #include "log.h"
