@@ -101,7 +101,7 @@
 <context>
     <name>FomodInfoReader</name>
     <message>
-        <location filename="xml_info_reader.h" line="105"/>
+        <location filename="xml_info_reader.h" line="106"/>
         <source>Failed to parse %1. See console for details.</source>
         <translation type="unfinished"></translation>
     </message>
