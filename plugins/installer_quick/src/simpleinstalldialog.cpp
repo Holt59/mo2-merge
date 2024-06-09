@@ -26,9 +26,9 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace MOBase;
 
-
-SimpleInstallDialog::SimpleInstallDialog(const GuessedValue<QString> &preset, QWidget *parent)
-  : QDialog(parent), ui(new Ui::SimpleInstallDialog), m_Manual(false)
+SimpleInstallDialog::SimpleInstallDialog(const GuessedValue<QString>& preset,
+                                         QWidget* parent)
+    : QDialog(parent), ui(new Ui::SimpleInstallDialog), m_Manual(false)
 {
   ui->setupUi(this);
 
@@ -44,7 +44,7 @@ SimpleInstallDialog::SimpleInstallDialog(const GuessedValue<QString> &preset, QW
 
 SimpleInstallDialog::~SimpleInstallDialog()
 {
-    delete ui;
+  delete ui;
 }
 
 QString SimpleInstallDialog::getName() const
