@@ -1,23 +1,17 @@
 #include "installerquick.h"
 
-#include "iplugingame.h"
 #include "igamefeatures.h"
+#include "iplugingame.h"
 #include "log.h"
 
-#include <QtPlugin>
 #include <QDialog>
-
+#include <QtPlugin>
 
 #include "simpleinstalldialog.h"
 
-
 using namespace MOBase;
 
-
-InstallerQuick::InstallerQuick()
-  : m_MOInfo(nullptr)
-{
-}
+InstallerQuick::InstallerQuick() : m_MOInfo(nullptr) {}
 
 bool InstallerQuick::init(IOrganizer* moInfo)
 {
@@ -54,9 +48,9 @@ VersionInfo InstallerQuick::version() const
 
 QList<PluginSetting> InstallerQuick::settings() const
 {
-  return {
-    PluginSetting("silent", "simple plugins will be installed without any user interaction", QVariant(false))
-  };
+  return {PluginSetting("silent",
+                        "simple plugins will be installed without any user interaction",
+                        QVariant(false))};
 }
 
 unsigned int InstallerQuick::priority() const
@@ -64,23 +58,21 @@ unsigned int InstallerQuick::priority() const
   return 50;
 }
 
-
 bool InstallerQuick::isManualInstaller() const
 {
   return false;
 }
 
-
-bool InstallerQuick::isDataTextArchiveTopLayer(
-  std::shared_ptr<const IFileTree> tree, QString const& dataFolderName, ModDataChecker* checker) const
+bool InstallerQuick::isDataTextArchiveTopLayer(std::shared_ptr<const IFileTree> tree,
+                                               QString const& dataFolderName,
+                                               ModDataChecker* checker) const
 {
-  // A "DataText" archive is defined as having exactly one folder named like `dataFolderName`
-  // and one or more "useless" files (text files, pdf, or images).
+  // A "DataText" archive is defined as having exactly one folder named like
+  // `dataFolderName` and one or more "useless" files (text files, pdf, or images).
   static const std::set<QString, FileNameComparator> txtExtensions{
-    "txt", "pdf", "md", "jpg", "jpeg", "png", "bmp"
-  };
+      "txt", "pdf", "md", "jpg", "jpeg", "png", "bmp"};
   bool dataFound = false;
-  bool txtFound = false;
+  bool txtFound  = false;
   for (auto entry : *tree) {
     if (entry->isDir()) {
       // If data was already found, or this is a directory not named "data", fail:
@@ -88,8 +80,7 @@ bool InstallerQuick::isDataTextArchiveTopLayer(
         return false;
       }
       dataFound = true;
-    }
-    else {
+    } else {
       if (txtExtensions.count(entry->suffix()) == 0) {
         return false;
       }
@@ -99,28 +90,26 @@ bool InstallerQuick::isDataTextArchiveTopLayer(
   return dataFound && txtFound;
 }
 
-
-std::shared_ptr<const IFileTree> InstallerQuick::getSimpleArchiveBase(
-  std::shared_ptr<const IFileTree> dataTree, QString const& dataFolderName, ModDataChecker* checker) const
+std::shared_ptr<const IFileTree>
+InstallerQuick::getSimpleArchiveBase(std::shared_ptr<const IFileTree> dataTree,
+                                     QString const& dataFolderName,
+                                     ModDataChecker* checker) const
 {
   if (!checker) {
     return nullptr;
   }
   while (true) {
     if (checker->dataLooksValid(dataTree) == ModDataChecker::CheckReturn::VALID ||
-      isDataTextArchiveTopLayer(dataTree, dataFolderName, checker)) {
+        isDataTextArchiveTopLayer(dataTree, dataFolderName, checker)) {
       return dataTree;
-    }
-    else if (dataTree->size() == 1 && dataTree->at(0)->isDir()) {
+    } else if (dataTree->size() == 1 && dataTree->at(0)->isDir()) {
       dataTree = dataTree->at(0)->astree();
-    }
-    else {
+    } else {
       log::debug("Archive is not a simple archive.");
       return nullptr;
     }
   }
 }
-
 
 bool InstallerQuick::isArchiveSupported(std::shared_ptr<const IFileTree> tree) const
 {
@@ -128,35 +117,37 @@ bool InstallerQuick::isArchiveSupported(std::shared_ptr<const IFileTree> tree) c
   if (!checker) {
     return false;
   }
-  if (getSimpleArchiveBase(tree, m_MOInfo->managedGame()->dataDirectory().dirName(), checker.get()) != nullptr) {
+  if (getSimpleArchiveBase(tree, m_MOInfo->managedGame()->dataDirectory().dirName(),
+                           checker.get()) != nullptr) {
     return true;
   }
   return checker->dataLooksValid(tree) == ModDataChecker::CheckReturn::FIXABLE;
 }
 
-
-IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString>& modName, std::shared_ptr<IFileTree>& tree,
-  QString&, int&)
+IPluginInstaller::EInstallResult
+InstallerQuick::install(GuessedValue<QString>& modName,
+                        std::shared_ptr<IFileTree>& tree, QString&, int&)
 {
   const QString dataFolderName = m_MOInfo->managedGame()->dataDirectory().dirName();
   auto checker = m_MOInfo->gameFeatures()->gameFeature<ModDataChecker>();
 
-  auto base = std::const_pointer_cast<IFileTree>(getSimpleArchiveBase(tree, dataFolderName, checker.get()));
+  auto base = std::const_pointer_cast<IFileTree>(
+      getSimpleArchiveBase(tree, dataFolderName, checker.get()));
   if (base == nullptr) {
     tree = checker->fix(tree);
-  }
-  else {
+  } else {
     tree = base;
   }
   if (tree != nullptr) {
     SimpleInstallDialog dialog(modName, parentWidget());
-    if (m_MOInfo->pluginSetting(name(), "silent").toBool() || dialog.exec() == QDialog::Accepted) {
+    if (m_MOInfo->pluginSetting(name(), "silent").toBool() ||
+        dialog.exec() == QDialog::Accepted) {
       modName.update(dialog.getName(), GUESS_USER);
 
       // If we have a data+txt archive, we move files to the data folder and
       // switch to the data folder. We need to check that we actually have a
-      // checker here, otherwise it is anyway impossible that isDataTextArchiveTopLayer()
-      // returned true.
+      // checker here, otherwise it is anyway impossible that
+      // isDataTextArchiveTopLayer() returned true.
       if (checker && isDataTextArchiveTopLayer(tree, dataFolderName, checker.get())) {
         auto dataTree = tree->findDirectory(dataFolderName);
         dataTree->detach();
@@ -164,24 +155,21 @@ IPluginInstaller::EInstallResult InstallerQuick::install(GuessedValue<QString>& 
         tree = dataTree;
       }
       return RESULT_SUCCESS;
-    }
-    else {
+    } else {
       if (dialog.manualRequested()) {
         modName.update(dialog.getName(), GUESS_USER);
         return RESULT_MANUALREQUESTED;
-      }
-      else {
+      } else {
         return RESULT_CANCELED;
       }
     }
-  }
-  else {
+  } else {
     // install shouldn't even have even have been called
     qCritical("unsupported archive for quick installer");
     return RESULT_FAILED;
   }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(installerQuick, InstallerQuick)
 #endif
