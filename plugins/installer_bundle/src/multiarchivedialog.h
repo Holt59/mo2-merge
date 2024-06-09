@@ -26,29 +26,32 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ifiletree.h"
 
-namespace Ui {
-  class MultiArchiveDialog;
+namespace Ui
+{
+class MultiArchiveDialog;
 }
-
-
 
 /**
  *
  **/
-class MultiArchiveDialog: public QDialog
+class MultiArchiveDialog : public QDialog
 {
   Q_OBJECT
-  
+
 public:
- /**
-  * @brief Constructor
-  *
-  * @param tree the directory tree of the archive. The caller is resonsible to verify this actually qualifies as a bain installer
-  * @param modName proposed name for the mod. The dialog allows the user to change this
-  * @param packageTXT path to the extracted package.txt file or an empty string if there is none
-  * @param parent parent widget
-  **/
- explicit MultiArchiveDialog(std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> entries,  QWidget *parent);
+  /**
+   * @brief Constructor
+   *
+   * @param tree the directory tree of the archive. The caller is resonsible to verify
+   *this actually qualifies as a bain installer
+   * @param modName proposed name for the mod. The dialog allows the user to change this
+   * @param packageTXT path to the extracted package.txt file or an empty string if
+   *there is none
+   * @param parent parent widget
+   **/
+  explicit MultiArchiveDialog(
+      std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> entries,
+      QWidget* parent);
   ~MultiArchiveDialog();
 
   /**
@@ -67,11 +70,9 @@ private slots:
   void on_cancelBtn_clicked();
 
 private:
-
-  Ui::MultiArchiveDialog *ui;
+  Ui::MultiArchiveDialog* ui;
   bool m_Manual;
   std::shared_ptr<const MOBase::FileTreeEntry> m_SelectedEntry;
-
 };
 
-#endif // BAINCOMPLEXINSTALLERDIALOG_H
+#endif  // BAINCOMPLEXINSTALLERDIALOG_H

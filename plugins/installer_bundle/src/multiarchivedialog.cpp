@@ -1,13 +1,12 @@
 #include "multiarchivedialog.h"
 #include "ui_multiarchivedialog.h"
 
-
 using namespace MOBase;
 
-
 MultiArchiveDialog::MultiArchiveDialog(
-  std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> entries, QWidget* parent)
-  : QDialog(parent), ui(new Ui::MultiArchiveDialog), m_Manual(false), m_SelectedEntry(nullptr)
+    std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> entries, QWidget* parent)
+    : QDialog(parent), ui(new Ui::MultiArchiveDialog), m_Manual(false),
+      m_SelectedEntry(nullptr)
 {
   ui->setupUi(this);
 
@@ -24,18 +23,15 @@ MultiArchiveDialog::MultiArchiveDialog(
   }
 }
 
-
 MultiArchiveDialog::~MultiArchiveDialog()
 {
   delete ui;
 }
 
-
 void MultiArchiveDialog::on_cancelBtn_clicked()
 {
   this->reject();
 }
-
 
 void MultiArchiveDialog::on_manualBtn_clicked()
 {

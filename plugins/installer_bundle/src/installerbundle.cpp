@@ -26,13 +26,9 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace MOBase;
 
+InstallerBundle::InstallerBundle() {}
 
-InstallerBundle::InstallerBundle()
-{
-}
-
-
-bool InstallerBundle::init(IOrganizer *organizer)
+bool InstallerBundle::init(IOrganizer* organizer)
 {
   m_Organizer = organizer;
   return true;
@@ -65,9 +61,10 @@ VersionInfo InstallerBundle::version() const
 
 QList<PluginSetting> InstallerBundle::settings() const
 {
-  return {
-    PluginSetting("auto_reinstall", "when reinstalling from an archive containing multiple mods, automatically select the previously installed", true)
-  };
+  return {PluginSetting("auto_reinstall",
+                        "when reinstalling from an archive containing multiple mods, "
+                        "automatically select the previously installed",
+                        true)};
 }
 
 unsigned int InstallerBundle::priority() const
@@ -80,13 +77,14 @@ bool InstallerBundle::isManualInstaller() const
   return false;
 }
 
-void InstallerBundle::onInstallationStart(QString const& archive, bool reinstallation, IModInterface* currentMod)
+void InstallerBundle::onInstallationStart(QString const& archive, bool reinstallation,
+                                          IModInterface* currentMod)
 {
   // We reset some field and fetch the previously installed file:
   m_InstallationFile = archive;
-  m_InstallerUsed = false;
-  m_SelectedFile = "";
-  m_PreviousFile = "";
+  m_InstallerUsed    = false;
+  m_SelectedFile     = "";
+  m_PreviousFile     = "";
 
   if (reinstallation && m_Organizer->pluginSetting(name(), "auto_reinstall").toBool()) {
     m_PreviousFile = currentMod->pluginSetting(name(), "archive", QString()).toString();
@@ -102,7 +100,8 @@ void InstallerBundle::onInstallationEnd(EInstallResult result, IModInterface* ne
   }
 }
 
-std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> InstallerBundle::findObjects(std::shared_ptr<const IFileTree> tree) const
+std::vector<std::shared_ptr<const MOBase::FileTreeEntry>>
+InstallerBundle::findObjects(std::shared_ptr<const IFileTree> tree) const
 {
   std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> entries;
   // Check if we have an archive:
@@ -112,11 +111,11 @@ std::vector<std::shared_ptr<const MOBase::FileTreeEntry>> InstallerBundle::findO
   int nDirs = 0;
   for (auto entry : *tree) {
     if (entry->isFile()) {
-      if (managerExtensions.contains(entry->suffix(), FileNameComparator::CaseSensitivity)) {
+      if (managerExtensions.contains(entry->suffix(),
+                                     FileNameComparator::CaseSensitivity)) {
         entries.push_back(entry);
       }
-    }
-    else {
+    } else {
       nDirs++;
     }
   }
@@ -140,8 +139,9 @@ bool InstallerBundle::isArchiveSupported(std::shared_ptr<const IFileTree> tree) 
   return !findObjects(tree).empty();
 }
 
-IPluginInstaller::EInstallResult InstallerBundle::install(
-  GuessedValue<QString>& modName, std::shared_ptr<IFileTree>& tree, QString&, int &modId)
+IPluginInstaller::EInstallResult
+InstallerBundle::install(GuessedValue<QString>& modName,
+                         std::shared_ptr<IFileTree>& tree, QString&, int& modId)
 {
   // Find a valid "object":
   auto entries = findObjects(tree);
@@ -152,8 +152,7 @@ IPluginInstaller::EInstallResult InstallerBundle::install(
   std::shared_ptr<const FileTreeEntry> entry = nullptr;
   if (entries.size() == 1) {
     entry = entries[0];
-  }
-  else {
+  } else {
     if (!m_PreviousFile.isEmpty()) {
       entry = tree->find(m_PreviousFile);
     }
@@ -161,14 +160,12 @@ IPluginInstaller::EInstallResult InstallerBundle::install(
     if (entry == nullptr) {
       MultiArchiveDialog dialog(entries, parentWidget());
       if (dialog.exec() == QDialog::Accepted) {
-        entry = dialog.selectedEntry();
+        entry          = dialog.selectedEntry();
         m_SelectedFile = entry->pathFrom(tree);
-      }
-      else {
+      } else {
         if (dialog.manualRequested()) {
           return IPluginInstaller::RESULT_MANUALREQUESTED;
-        }
-        else {
+        } else {
           return IPluginInstaller::RESULT_CANCELED;
         }
       }
@@ -183,13 +180,14 @@ IPluginInstaller::EInstallResult InstallerBundle::install(
 
   // Extract it:
   QString tempFile = manager()->extractFile(entry);
-  IPluginInstaller::EInstallResult res = manager()->installArchive(modName, tempFile, modId);
+  IPluginInstaller::EInstallResult res =
+      manager()->installArchive(modName, tempFile, modId);
   if (res == IPluginInstaller::RESULT_SUCCESS) {
     res = IPluginInstaller::RESULT_SUCCESSCANCEL;
   }
   return res;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(installerBundle, InstallerBundle)
 #endif
