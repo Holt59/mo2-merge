@@ -2,13 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 cmake_policy(SET CMP0144 NEW)
 
-if(DEFINED DEPENDENCIES_DIR)
-	include(${DEPENDENCIES_DIR}/modorganizer_super/cmake_common/mo2.cmake)
-else()
-	include(${CMAKE_CURRENT_LIST_DIR}/../cmake_common/mo2.cmake)
-endif()
-
 project(plugin_python CXX)
+
+find_package(Python COMPONENTS Interpreter Development)
+find_package(pybind11 CONFIG)
 
 set(PYTHON_BUILD_PATH ${PYTHON_ROOT}/PCBuild/amd64)
 
@@ -29,9 +26,6 @@ set(PYTHON_LIBRARY ${Python_LIBRARY})
 
 # useful for naming DLL, zip, etc. (3.10 -> 310)
 set(Python_VERSION_SHORT ${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
-
-# pybind11
-add_subdirectory(${MO2_BUILD_PATH}/pybind11 ${CMAKE_CURRENT_BINARY_DIR}/pybind11)
 
 # projects
 add_subdirectory(src)

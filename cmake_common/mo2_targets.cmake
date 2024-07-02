@@ -4,6 +4,10 @@ if (POLICY CMP0144)
     cmake_policy(SET CMP0144 NEW)
 endif()
 
+if (POLICY CMP0135)
+    cmake_policy(SET CMP0135 OLD)
+endif()
+
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
 
@@ -145,147 +149,26 @@ function(mo2_find_corelib LIBRARY)
     endif()
 endfunction()
 
-#! mo2_find_bsatk : find and create a mo2::bsatk target
-#
-function(mo2_find_bsatk)
-    mo2_find_corelib(bsatk DEPENDS boost::thread zlib lz4)
-endfunction()
-
-#! mo2_find_esptk : find and create a mo2::esptk target
-#
-function(mo2_find_esptk)
-    mo2_find_corelib(esptk)
-endfunction()
-
-#! mo2_find_archive : find and create a mo2::archive target
-#
-function(mo2_find_archive)
-    mo2_find_corelib(archive)
-endfunction()
-
-#! mo2_find_githubpp : find and create a mo2::githubpp target
-#
-function(mo2_find_githubpp)
-    mo2_find_corelib(githubpp DEPENDS Qt::Core Qt::Network)
-endfunction()
-
-#! mo2_find_lootcli : find and create a mo2::lootcli target
-#
-function(mo2_find_lootcli)
-
-    if (TARGET mo2-lootcli)
-        return()
-    endif()
-
-    add_library(mo2-lootcli IMPORTED INTERFACE)
-    target_include_directories(mo2-lootcli INTERFACE
-        ${MO2_SUPER_PATH}/lootcli/include)
-    add_library(mo2::lootcli ALIAS mo2-lootcli)
-
-endfunction()
-
-#! mo2_find_gamebryo : find and create a mo2::gamebryo target
-#
-function(mo2_find_gamebryo)
-
-    # this does not use mo2_find_corelib because the target name do not match (we
-    # want gamebryo, the target is game_gamebryo), and the src folder is not the same
-    # other lib (src/gamebryo instead of src/)
-
-    # target was already created
-    if (TARGET mo2-gamebryo)
-        return()
-    endif()
-
-    # if the target exists, we use it
-    if (TARGET game_gamebryo)
-        message(STATUS "Found existing game_gamebryo target, using it.")
-
-        add_library(mo2-gamebryo ALIAS game_gamebryo)
-        add_library(mo2::gamebryo ALIAS game_gamebryo)
-    else()
-        message(STATUS "Existing game_gamebryo target not found, creating it.")
-
-        add_library(mo2-gamebryo IMPORTED STATIC)
-        set_target_properties(mo2-gamebryo PROPERTIES
-            IMPORTED_LOCATION ${MO2_INSTALL_LIBS_PATH}/game_gamebryo.lib)
-        target_include_directories(mo2-gamebryo
-            INTERFACE ${MO2_SUPER_PATH}/game_gamebryo/src/gamebryo)
-
-        mo2_add_dependencies(mo2-gamebryo INTERFACE zlib lz4)
-
-        add_library(mo2::gamebryo ALIAS mo2-gamebryo)
-    endif()
-
-endfunction()
-
-#! mo2_find_creation : find and create a mo2::creation target
-#
-function(mo2_find_creation)
-
-    # same as mo2_find_gamebryo, we do not use mo2_find_corelib (see mo2_find_gamebryo
-    # comment for why)
-
-    # target was already created
-    if (TARGET mo2-creation)
-        return()
-    endif()
-
-    # if the target exists, we use it
-    if (TARGET game_creation)
-        message(STATUS "Found existing game_creation target, using it.")
-
-        add_library(mo2-creation ALIAS game_creation)
-        add_library(mo2::creation ALIAS game_creation)
-    else()
-        message(STATUS "Existing game_creation target not found, creating it.")
-
-        add_library(mo2-creation IMPORTED STATIC)
-        set_target_properties(mo2-creation PROPERTIES
-            IMPORTED_LOCATION ${MO2_INSTALL_LIBS_PATH}/game_creation.lib)
-        target_include_directories(mo2-creation
-            INTERFACE ${MO2_SUPER_PATH}/game_gamebryo/src/creation)
-
-        add_library(mo2::creation ALIAS mo2-creation)
-
-        mo2_add_dependencies(mo2-creation INTERFACE gamebryo lz4)
-    endif()
-
-endfunction()
-
 #! mo2_find_loot : find and create a mo2::loot target
 #
-function(mo2_find_loot)
-    if (TARGET mo2-loot)
+function(mo2_find_libloot)
+    if (TARGET libloot)
         return()
     endif()
 
-    mo2_required_variable(NAME LOOT_PATH TYPE PATH)
+    FetchContent_Declare(
+        libloot_build
+        URL https://github.com/loot/libloot/releases/download/0.23.0/libloot-0.23.0-win64.7z
+    )
+    FetchContent_MakeAvailable(libloot_build)
 
     find_package(Boost COMPONENTS locale REQUIRED)
 
-    add_library(mo2-loot IMPORTED SHARED)
-    set_target_properties(mo2-loot PROPERTIES IMPORTED_LOCATION ${LOOT_PATH}/bin/loot.dll)
-    set_target_properties(mo2-loot PROPERTIES IMPORTED_IMPLIB ${LOOT_PATH}/lib/loot.lib)
-    target_include_directories(mo2-loot INTERFACE ${LOOT_PATH}/include)
-    target_link_libraries(mo2-loot INTERFACE ${Boost_LIBRARIES})
-    add_library(mo2::loot ALIAS mo2-loot)
-endfunction()
-
-#! mo2_find_spdlog : find and carete a mo2::spdlog target
-#
-function(mo2_find_spdlog)
-    if (TARGET mo2-spdlog)
-        return()
-    endif()
-
-    mo2_required_variable(NAME SPDLOG_ROOT TYPE PATH)
-
-    add_library(mo2-spdlog INTERFACE)
-    target_compile_definitions(mo2-spdlog INTERFACE SPDLOG_USE_STD_FORMAT)
-    target_include_directories(mo2-spdlog SYSTEM INTERFACE ${SPDLOG_ROOT}/include)
-    add_library(mo2::spdlog ALIAS mo2-spdlog)
-
+    add_library(libloot IMPORTED SHARED)
+    set_target_properties(libloot PROPERTIES IMPORTED_LOCATION ${libloot_build_SOURCE_DIR}/bin/loot.dll)
+    set_target_properties(libloot PROPERTIES IMPORTED_IMPLIB ${libloot_build_SOURCE_DIR}/lib/loot.lib)
+    target_include_directories(libloot INTERFACE ${libloot_build_SOURCE_DIR}/include)
+    target_link_libraries(libloot INTERFACE Boost::locale)
 endfunction()
 
 #! mo2_find_directxtex : find and create a mo2::directxtex target
@@ -389,22 +272,20 @@ endfunction()
 #! mo2_find_tomlplusplus : find and create a mo2::tomlplusplus target
 #
 function(mo2_find_tomlplusplus)
-    if (TARGET mo2-tomlplusplus)
+    if (TARGET tomlplusplus)
         return()
     endif()
 
     FetchContent_Declare(
-        tomlplusplus
+        tomlplusplus_fetch
         URL "https://github.com/marzer/tomlplusplus/archive/v3.2.0.tar.gz"
         URL_HASH "SHA256=aeba776441df4ac32e4d4db9d835532db3f90fd530a28b74e4751a2915a55565"
     )
-    FetchContent_MakeAvailable(tomlplusplus)
+    FetchContent_MakeAvailable(tomlplusplus_fetch)
 
-    add_library(mo2-tomlplusplus INTERFACE)
-    target_include_directories(mo2-tomlplusplus INTERFACE "${tomlplusplus_SOURCE_DIR}/include")
-    add_dependencies(mo2-tomlplusplus tomlplusplus)
-
-    add_library(mo2::tomlplusplus ALIAS mo2-tomlplusplus)
+    add_library(tomlplusplus INTERFACE)
+    target_include_directories(tomlplusplus INTERFACE "${tomlplusplus_fetch_SOURCE_DIR}/include")
+    add_dependencies(tomlplusplus tomlplusplus_fetch)
 
 endfunction()
 
@@ -415,9 +296,8 @@ function(mo2_find_usvfs)
         return()
     endif()
 
-    set(USVFS_PATH "${MO2_BUILD_PATH}/usvfs")
-    set(USVFS_INC_PATH "${USVFS_PATH}/include")
-    set(USVFS_LIB_PATH "${USVFS_PATH}/lib")
+    set(USVFS_INC_PATH "${USVFS_ROOT}/include")
+    set(USVFS_LIB_PATH "${USVFS_ROOT}/lib")
 
     add_library(mo2-usvfs IMPORTED SHARED)
     set_target_properties(mo2-usvfs PROPERTIES

@@ -5,3 +5,4 @@ mo2_configure_plugin(bsa_extractor
     WARNINGS OFF
     PRIVATE_DEPENDS bsatk)
 mo2_install_target(bsa_extractor)
+

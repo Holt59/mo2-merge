@@ -7,7 +7,7 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
 
 # setup path for find_package(), etc.
-mo2_required_variable(NAME BOOST_ROOT TYPE PATH)
+# mo2_required_variable(NAME BOOST_ROOT TYPE PATH)
 mo2_required_variable(NAME QT_ROOT TYPE PATH)
 mo2_required_variable(NAME PYTHON_ROOT TYPE PATH)
 mo2_required_variable(NAME CMAKE_INSTALL_PREFIX TYPE PATH)
@@ -18,10 +18,7 @@ get_filename_component(MO2_UIBASE_PATH "${MO2_SUPER_PATH}/uibase" REALPATH)
 get_filename_component(MO2_INSTALL_PATH "${MO2_SUPER_PATH}/../../install" REALPATH)
 get_filename_component(MO2_INSTALL_LIBS_PATH "${MO2_INSTALL_PATH}/libs" REALPATH)
 
-list(APPEND CMAKE_PREFIX_PATH
-	${QT_ROOT}/lib/cmake
-	${BOOST_ROOT}/build
-	${MO2_BUILD_PATH}/googletest/build/lib/cmake/GTest)
+list(APPEND CMAKE_PREFIX_PATH QT_ROOT}/lib/cmake)
 
 # find Qt major version and set QT_DEFAULT_MAJOR_VERSION to avoid issues
 # when including LinguistTools without a QtCore

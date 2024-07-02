@@ -40,3 +40,4 @@ set_tests_properties(${runner-tests_gtests}
     PROPERTIES
     ENVIRONMENT "PLUGIN_DIR=${CMAKE_CURRENT_SOURCE_DIR}/plugins;PYTHONPATH=${PYTHONPATH}"
 )
+

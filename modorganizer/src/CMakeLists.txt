@@ -1,14 +1,22 @@
 cmake_minimum_required(VERSION 3.16)
 
+find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets WebSockets)
+find_package(Boost REQUIRED COMPONENTS program_options signals2 uuid accumulators)
+
+mo2_find_usvfs()
+
 add_executable(organizer)
 set_target_properties(organizer PROPERTIES OUTPUT_NAME "ModOrganizer")
 mo2_configure_executable(organizer
 	WARNINGS OFF
-	EXTRA_TRANSLATIONS ${MO2_SUPER_PATH}/game_gamebryo/src ${MO2_UIBASE_PATH}/src
-	PRIVATE_DEPENDS
-		uibase githubpp bsatk esptk archive usvfs lootcli boost::program_options
-		Qt::WebEngineWidgets Qt::WebSockets)
-target_link_libraries(organizer PUBLIC Shlwapi)
+	EXTRA_TRANSLATIONS ${CMAKE_SOURCE_DIR}/libs/game_gamebryo/src ${CMAKE_SOURCE_DIR}/uibase/src)
+get_target_property(LOOTCLI_INCLUDES lootcli INCLUDE_DIRECTORIES)
+target_link_libraries(organizer
+	PRIVATE uibase githubpp bsatk esptk archive mo2::usvfs
+	Boost::program_options Boost::signals2 Boost::uuid Boost::accumulators
+	Qt6::WebEngineWidgets Qt6::WebSockets Shlwapi Bcrypt
+)
+target_include_directories(organizer PRIVATE ${LOOTCLI_INCLUDES})
 mo2_install_target(organizer)
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/dlls.manifest.qt6"

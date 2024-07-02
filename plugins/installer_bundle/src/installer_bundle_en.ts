@@ -4,12 +4,12 @@
 <context>
     <name>InstallerBundle</name>
     <message>
-        <location filename="installerbundle.cpp" line="48"/>
+        <location filename="installerbundle.cpp" line="44"/>
         <source>Bundle Installer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installerbundle.cpp" line="58"/>
+        <location filename="installerbundle.cpp" line="54"/>
         <source>Proxy-Installer to handle bundles containing the actual mod archive</source>
         <translation type="unfinished"></translation>
     </message>

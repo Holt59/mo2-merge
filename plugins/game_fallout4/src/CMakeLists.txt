@@ -5,3 +5,4 @@ mo2_configure_plugin(game_fallout4
     WARNINGS OFF
     PRIVATE_DEPENDS creation)
 mo2_install_target(game_fallout4)
+

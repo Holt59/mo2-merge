@@ -7,6 +7,5 @@ mo2_configure_library(mobase
 	EXTERNAL_WARNINGS 4
 	AUTOMOC ON
 	TRANSLATIONS OFF
-	PRIVATE_DEPENDS uibase Qt::Core
 )
-target_link_libraries(mobase PRIVATE pybind11::qt pybind11::utils)
+target_link_libraries(mobase PRIVATE uibase pybind11::qt pybind11::utils)

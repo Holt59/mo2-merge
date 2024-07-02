@@ -1,0 +1,42 @@
+{
+  "dependencies": [
+    "7zip",
+    "zlib",
+    "lz4",
+    "pybind11",
+    { "name": "spdlog", "features": ["wchar"] },
+    "boost-headers",
+    "boost-assign",
+    "boost-interprocess",
+    "boost-thread",
+    "boost-date-time",
+    "boost-locale",
+    "boost-signals2",
+    "boost-accumulators",
+    "boost-uuid",
+    "boost-program-options"
+  ],
+  "builtin-baseline": "f61a294e765b257926ae9e9d85f96468a0af74e7",
+  "overrides": [
+    {
+      "name": "7zip",
+      "version": "24.06"
+    },
+    {
+      "name": "pybind11",
+      "version": "2.12.0"
+    },
+    {
+      "name": "spdlog",
+      "version": "1.14.1"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.1"
+    },
+    {
+      "name": "lz4",
+      "version": "1.9.4"
+    }
+  ]
+}

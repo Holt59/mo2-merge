@@ -63,3 +63,4 @@ foreach (test_file ${test_files})
     	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../mocks)
 	add_dependencies(python-tests ${target})
 endforeach()
+

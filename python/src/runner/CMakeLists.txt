@@ -7,9 +7,8 @@ mo2_configure_library(runner
 	EXTERNAL_WARNINGS 4
 	AUTOMOC ON
 	TRANSLATIONS OFF
-	PUBLIC_DEPENDS uibase Qt::Core
 )
-target_link_libraries(runner PRIVATE pybind11::embed pybind11::qt)
+target_link_libraries(runner PRIVATE uibase pybind11::embed pybind11::qt)
 target_include_directories(runner PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(runner PRIVATE RUNNER_BUILD)
 

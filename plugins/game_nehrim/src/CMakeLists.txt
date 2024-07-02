@@ -5,3 +5,4 @@ mo2_configure_plugin(game_nehrim
     WARNINGS OFF
     PRIVATE_DEPENDS gamebryo)
 mo2_install_target(game_nehrim)
+

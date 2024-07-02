@@ -5,3 +5,4 @@ mo2_configure_plugin(game_skyrimse
     WARNINGS OFF
     PRIVATE_DEPENDS creation)
 mo2_install_target(game_skyrimse)
+

@@ -53,3 +53,4 @@ set(PYQT_LIB_DIR ${PYTHON_ROOT}/Lib/site-packages/PyQt${QT_MAJOR_VERSION})
 set(PYQT_TARGET_DIR ${PYLIB_DIR}/PyQt${QT_MAJOR_VERSION})
 file(GLOB pyqt_files ${PYQT_LIB_DIR}/*.py ${PYQT_LIB_DIR}/*.pyd ${PYQT_LIB_DIR}/*.pyi)
 install(FILES ${pyqt_files} DESTINATION ${PYQT_TARGET_DIR})
+

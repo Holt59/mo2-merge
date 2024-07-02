@@ -4,12 +4,12 @@
 <context>
     <name>InstallerQuick</name>
     <message>
-        <location filename="installerquick.cpp" line="37"/>
+        <location filename="installerquick.cpp" line="31"/>
         <source>Simple Installer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installerquick.cpp" line="47"/>
+        <location filename="installerquick.cpp" line="41"/>
         <source>Installer for very simple archives</source>
         <translation type="unfinished"></translation>
     </message>
