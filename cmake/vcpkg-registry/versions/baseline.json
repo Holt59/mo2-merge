@@ -1,0 +1,5 @@
+{
+  "2.5.x": {
+    "libloot": { "baseline": "0.23.0", "port-version": 0 }
+  }
+}

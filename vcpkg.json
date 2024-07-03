@@ -14,9 +14,10 @@
     "boost-signals2",
     "boost-accumulators",
     "boost-uuid",
-    "boost-program-options"
+    "boost-program-options",
+    "tomlplusplus",
+    "libloot"
   ],
-  "builtin-baseline": "f61a294e765b257926ae9e9d85f96468a0af74e7",
   "overrides": [
     {
       "name": "7zip",
@@ -37,6 +38,10 @@
     {
       "name": "lz4",
       "version": "1.9.4"
+    },
+    {
+      "name": "tomlplusplus",
+      "version": "3.1.0"
     }
   ]
 }
