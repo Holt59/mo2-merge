@@ -15,7 +15,7 @@
       "kind": "filesystem",
       "baseline": "2.5.x",
       "path": "./cmake/vcpkg-registry",
-      "packages": [ "libloot" ]
+      "packages": [ "libloot", "usvfs" ]
     }
   ],
   "overlay-triplets": [

@@ -8,9 +8,9 @@ set(USE_FOLDERS TRUE)
 
 add_subdirectory(uibase)
 
-set(CMAKE_FOLDER python)
-add_subdirectory(python)
-unset(CMAKE_FOLDER)
+# set(CMAKE_FOLDER python)
+# add_subdirectory(python)
+# unset(CMAKE_FOLDER)
 
 set(CMAKE_FOLDER libs)
 file(GLOB library_directories

@@ -4,7 +4,12 @@
     "zlib",
     "lz4",
     "pybind11",
-    { "name": "spdlog", "features": ["wchar"] },
+    {
+      "name": "spdlog",
+      "features": [
+        "wchar"
+      ]
+    },
     "boost-headers",
     "boost-assign",
     "boost-interprocess",
@@ -16,7 +21,8 @@
     "boost-uuid",
     "boost-program-options",
     "tomlplusplus",
-    "libloot"
+    "libloot",
+    "usvfs"
   ],
   "overrides": [
     {
