@@ -8,7 +8,6 @@
       "name": "spdlog",
       "features": ["wchar"]
     },
-    "directxtex",
     "boost-accumulators",
     "boost-assign",
     "boost-date-time",
@@ -20,8 +19,10 @@
     "boost-signals2",
     "boost-thread",
     "boost-uuid",
+    "bext-di",
     "tomlplusplus",
-    "libloot"
+    "libloot",
+    "libbsarch"
   ],
   "overrides": [
     {

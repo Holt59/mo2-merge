@@ -1,6 +1,6 @@
 {
   "2.5.x": {
     "libloot": { "baseline": "0.23.0", "port-version": 0 },
-    "usvfs": { "baseline": "master", "port-version": 0 }
+    "libbsarch": { "baseline": "0.0.10", "port-version": 0 }
   }
 }

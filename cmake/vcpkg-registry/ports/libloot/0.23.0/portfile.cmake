@@ -17,5 +17,3 @@ file(INSTALL ${SOURCE_PATH}/bin DESTINATION ${CURRENT_PACKAGES_DIR}/debug)
 file(INSTALL ${SOURCE_PATH}/lib DESTINATION ${CURRENT_PACKAGES_DIR}/debug)
 
 vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/${PORT}")
-
-# vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")

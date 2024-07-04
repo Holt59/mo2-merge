@@ -15,7 +15,7 @@
       "kind": "filesystem",
       "baseline": "2.5.x",
       "path": "./cmake/vcpkg-registry",
-      "packages": ["libloot", "usvfs"]
+      "packages": ["libloot", "libbsarch"]
     }
   ],
   "overlay-ports": ["cmake/ports"],

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
-if (POLICY CMP0135)
-    cmake_policy(SET CMP0135 OLD)
+# this disable a warning for libloot where IMPORTED_LOCATION is missing for some
+# configuration that we do not use
+if (POLICY CMP0111)
+    cmake_policy(SET CMP0111 OLD)
 endif()
 
 find_package(tomlplusplus CONFIG REQUIRED)
