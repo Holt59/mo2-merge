@@ -22,11 +22,8 @@ endfunction()
 #
 # \param:VARNAME name of the variable that will contain the path to Python
 function(mo2_find_python_executable VARNAME)
-	if (EXISTS "${PYTHON_ROOT}/PCbuild/amd64/python_d.exe")
-		set(${VARNAME} "${PYTHON_ROOT}/PCbuild/amd64/python_d.exe" PARENT_SCOPE)
-	else()
-		set(${VARNAME} "${PYTHON_ROOT}/PCbuild/amd64/python.exe" PARENT_SCOPE)
-	endif()
+	find_package(Python 3.12 COMPONENTS Interpreter REQUIRED)
+	set(${VARNAME} ${Python_EXECUTABLE} PARENT_SCOPE)
 endfunction()
 
 #! mo2_find_windeployqt_executable : find the full path to the windeployqt executable

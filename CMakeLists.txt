@@ -30,9 +30,7 @@ set(USE_FOLDERS TRUE)
 
 add_subdirectory(uibase)
 
-# set(CMAKE_FOLDER python)
-# add_subdirectory(python)
-# unset(CMAKE_FOLDER)
+mo2_add_subdirectories(FOLDER python GLOB python)
 
 mo2_add_subdirectories(FOLDER libs GLOB libs/*)
 

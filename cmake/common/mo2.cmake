@@ -7,9 +7,7 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
 
 # setup path for find_package(), etc.
-# mo2_required_variable(NAME BOOST_ROOT TYPE PATH)
 mo2_required_variable(NAME QT_ROOT TYPE PATH)
-# mo2_required_variable(NAME PYTHON_ROOT TYPE PATH)
 mo2_required_variable(NAME CMAKE_INSTALL_PREFIX TYPE PATH)
 
 get_filename_component(MO2_BUILD_PATH "${CMAKE_CURRENT_LIST_DIR}/../.." REALPATH)
