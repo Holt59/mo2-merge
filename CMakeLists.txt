@@ -34,11 +34,17 @@ add_subdirectory(uibase)
 # add_subdirectory(python)
 # unset(CMAKE_FOLDER)
 
-mo2_add_subdirectories(FOLDER libs GLOB "libs/*")
+mo2_add_subdirectories(FOLDER libs GLOB libs/*)
 
-mo2_add_subdirectories(FOLDER plugins/games GLOB "plugins/game_*")
-mo2_add_subdirectories(FOLDER plugins/installers GLOB "plugins/installer_*")
+mo2_add_subdirectories(FOLDER plugins/games GLOB plugins/game_* plugins/basic_games)
+mo2_add_subdirectories(FOLDER plugins/installers GLOB plugins/installer_*)
+mo2_add_subdirectories(FOLDER plugins/tools GLOB
+    plugins/bsa_extractor plugins/bsapacker plugins/fnistool plugins/tool_*)
+mo2_add_subdirectories(FOLDER plugins/diagnose GLOB
+    plugins/check_fnis plugins/diagnose_basic plugins/form43_checker
+    plugins/script_extender_plugin_checker)
+mo2_add_subdirectories(FOLDER plugins/preview GLOB plugins/preview_*)
 
-mo2_add_subdirectories(FOLDER tools GLOB "tools/*")
+mo2_add_subdirectories(FOLDER tools GLOB tools/*)
 
 add_subdirectory(modorganizer)

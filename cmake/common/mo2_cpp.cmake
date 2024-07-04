@@ -6,7 +6,6 @@ endif()
 
 include(CMakeParseArguments)
 include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/mo2_targets.cmake)
 
 #! mo2_configure_target : do basic configuration for a MO2 C++ target
 #
@@ -26,14 +25,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/mo2_targets.cmake)
 # \param:TRANSLATIONS generate translations (default ON)
 # \param:AUTOMOC automoc (and autouic, autoqrc), (default ON)
 # \param:EXTRA_TRANSLATIONS extra translations to include (folder)
-# \param:PUBLIC_DEPENDS adds PUBLIC dependencies to the target, see
-#   mo2_add_dependencies for information on what is available
-# \param:PRIVATE_DEPENDS same a PUBLIC_DEPENDS, but link is PRIVATE instead of PUBLIC
 #
 function(mo2_configure_target TARGET)
 	cmake_parse_arguments(MO2 "SOURCE_TREE"
 		"WARNINGS;EXTERNAL_WARNINGS;PERMISSIVE;BIGOBJ;CLI;TRANSLATIONS;AUTOMOC"
-		"EXTRA_TRANSLATIONS;PUBLIC_DEPENDS;PRIVATE_DEPENDS"
+		"EXTRA_TRANSLATIONS"
 		${ARGN})
 
 	# configure parameters and compiler flags
@@ -45,8 +41,6 @@ function(mo2_configure_target TARGET)
 	mo2_set_if_not_defined(MO2_TRANSLATIONS ON)
 	mo2_set_if_not_defined(MO2_AUTOMOC ON)
 	mo2_set_if_not_defined(MO2_EXTRA_TRANSLATIONS "")
-	mo2_set_if_not_defined(MO2_PUBLIC_DEPENDS "")
-	mo2_set_if_not_defined(MO2_PRIVATE_DEPENDS "")
 
 	if (${MO2_AUTOMOC})
 		find_package(Qt6 COMPONENTS Widgets REQUIRED)
@@ -188,14 +182,6 @@ function(mo2_configure_target TARGET)
 
 	target_link_libraries(${TARGET} PRIVATE Version Dbghelp)
 
-	if (MO2_PUBLIC_DEPENDS)
-		mo2_add_dependencies(${TARGET} PUBLIC ${MO2_PUBLIC_DEPENDS})
-	endif()
-
-	if (MO2_PRIVATE_DEPENDS)
-		mo2_add_dependencies(${TARGET} PRIVATE ${MO2_PRIVATE_DEPENDS})
-	endif()
-
 	# set the VS startup project if not already set
 	get_property(startup_project DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT)
 
@@ -209,21 +195,16 @@ endfunction()
 #
 # this function creates a set of tests available in the ${TARET}_gtests variable
 #
-# \param:DEPENDS dependencies to link to AND add folder for ctest to look for DLLs,
-#   typically the library being tests
-#
 # extra arguments are given to mo2_configure_target, TRANSLATIONS and AUTOMOC are
 # OFF by default
 #
 function(mo2_configure_tests TARGET)
 	mo2_configure_target(${TARGET} TRANSLATIONS OFF AUTOMOC OFF ${ARGN})
-	cmake_parse_arguments(MO2 "" "" "DEPENDS" ${ARGN})
 
 	set_target_properties(${TARGET} PROPERTIES MO2_TARGET_TYPE "tests")
 
 	find_package(GTest REQUIRED)
 	target_link_libraries(${TARGET} PRIVATE GTest::gtest GTest::gmock GTest::gtest_main)
-	mo2_add_dependencies(${TARGET} PRIVATE ${MO2_DEPENDS})
 
 	# gtest_discover_tests would be nice but it requires Qt DLL, uibase, etc., in the
 	# path, etc., and is not working right now
@@ -279,7 +260,7 @@ endfunction()
 #
 function(mo2_configure_plugin TARGET)
 	mo2_configure_target(${TARGET} ${ARGN})
-	mo2_add_dependencies(${TARGET} PUBLIC uibase)
+	target_link_libraries(${TARGET} PUBLIC uibase)
 
 	set_target_properties(${TARGET} PROPERTIES MO2_TARGET_TYPE "plugin")
 
