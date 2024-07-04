@@ -5,10 +5,32 @@
   "homepage": "https://github.com/ModOrganizer2/usvfs/",
   "license": "GPL-3.0",
   "supports": "!uwp",
+  "builtin-baseline": "f61a294e765b257926ae9e9d85f96468a0af74e7",
   "dependencies": [
     {
-      "name": "vcpkg-msbuild",
+      "name": "vcpkg-cmake",
       "host": true
-    }
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    },
+    "asmjit",
+    {
+      "name": "spdlog",
+      "features": ["wchar"]
+    },
+    "libudis86",
+    "boost-algorithm",
+    "boost-any",
+    "boost-dll",
+    "boost-filesystem",
+    "boost-format",
+    "boost-interprocess",
+    "boost-headers",
+    "boost-locale",
+    "boost-multi-index",
+    "boost-thread",
+    "boost-predef"
   ]
 }

@@ -6,9 +6,7 @@
     "pybind11",
     {
       "name": "spdlog",
-      "features": [
-        "wchar"
-      ]
+      "features": ["wchar"]
     },
     "boost-headers",
     "boost-assign",
@@ -21,8 +19,7 @@
     "boost-uuid",
     "boost-program-options",
     "tomlplusplus",
-    "libloot",
-    "usvfs"
+    "libloot"
   ],
   "overrides": [
     {

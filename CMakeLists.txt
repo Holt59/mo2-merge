@@ -1,6 +1,28 @@
 cmake_minimum_required(VERSION 3.16)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake_common/mo2.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/common/mo2.cmake)
+
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_LIST_DIR}/usvfs/install/lib/cmake)
+
+function (mo2_add_subdirectories)
+	cmake_parse_arguments(MO2 "" "FOLDER" "GLOB" ${ARGN})
+
+    if (NOT DEFINED MO2_FOLDER)
+        message(FATAL_ERROR  "missing FOLDER in add_subdirectories")
+    endif()
+    if (NOT DEFINED MO2_GLOB)
+        message(FATAL_ERROR  "missing GLOB in add_subdirectories")
+    endif()
+
+    file(GLOB directories RELATIVE ${CMAKE_CURRENT_LIST_DIR} LIST_DIRECTORIES TRUE ${MO2_GLOB})
+
+    set(CMAKE_FOLDER ${MO2_FOLDER})
+    foreach(directory ${directories})
+        add_subdirectory(${directory})
+    endforeach()
+    unset(CMAKE_FOLDER)
+
+endfunction()
 
 project(modorganizer2)
 
@@ -12,34 +34,11 @@ add_subdirectory(uibase)
 # add_subdirectory(python)
 # unset(CMAKE_FOLDER)
 
-set(CMAKE_FOLDER libs)
-file(GLOB library_directories
-    RELATIVE ${CMAKE_CURRENT_LIST_DIR}
-    LIST_DIRECTORIES TRUE
-    "libs/*")
-foreach(library_directory ${library_directories})
-    add_subdirectory(${library_directory})
-endforeach()
-unset(CMAKE_FOLDER)
+mo2_add_subdirectories(FOLDER libs GLOB "libs/*")
 
-# set(CMAKE_FOLDER plugins)
-# file(GLOB plugin_directories
-#     RELATIVE ${CMAKE_CURRENT_LIST_DIR}
-#     LIST_DIRECTORIES TRUE
-#     "plugins/*")
-# foreach(plugin_directory ${plugin_directories})
-#     add_subdirectory(${plugin_directory})
-# endforeach()
-# unset(CMAKE_FOLDER)
+mo2_add_subdirectories(FOLDER plugins/games GLOB "plugins/game_*")
+mo2_add_subdirectories(FOLDER plugins/installers GLOB "plugins/installer_*")
 
-set(CMAKE_FOLDER tools)
-file(GLOB tool_directories
-    RELATIVE ${CMAKE_CURRENT_LIST_DIR}
-    LIST_DIRECTORIES TRUE
-    "tools/*")
-foreach(tool_directory ${tool_directories})
-    add_subdirectory(${tool_directory})
-endforeach()
-unset(CMAKE_FOLDER)
+mo2_add_subdirectories(FOLDER tools GLOB "tools/*")
 
 add_subdirectory(modorganizer)
