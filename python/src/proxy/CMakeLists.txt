@@ -15,7 +15,7 @@ target_link_libraries(proxy PRIVATE runner)
 set_target_properties(proxy PROPERTIES OUTPUT_NAME ${PLUGIN_NAME})
 mo2_install_target(proxy FOLDER)
 
-set(PLUGIN_PYTHON_DIR ${MO2_INSTALL_PATH}/bin/plugins/${PLUGIN_NAME})
+set(PLUGIN_PYTHON_DIR bin/plugins/${PLUGIN_NAME})
 
 # install runner
 target_link_options(proxy PRIVATE "/DELAYLOAD:runner.dll")
@@ -48,9 +48,7 @@ install(FILES ${PYTHON_BUILD_PATH}/pythoncore/python${Python_VERSION_SHORT}.zip
 install(TARGETS mobase DESTINATION ${PYLIB_DIR})
 
 # install PyQt6
-#file(GLOB PYQT_DIR ${MO2_BUILD_PATH}/PyQt${QT_MAJOR_VERSION}*)
-set(PYQT_LIB_DIR ${PYTHON_ROOT}/Lib/site-packages/PyQt${QT_MAJOR_VERSION})
+set(PYQT_LIB_DIR ${CMAKE_BINARY_DIR}/pylibs/PyQt${QT_MAJOR_VERSION})
 set(PYQT_TARGET_DIR ${PYLIB_DIR}/PyQt${QT_MAJOR_VERSION})
 file(GLOB pyqt_files ${PYQT_LIB_DIR}/*.py ${PYQT_LIB_DIR}/*.pyd ${PYQT_LIB_DIR}/*.pyi)
 install(FILES ${pyqt_files} DESTINATION ${PYQT_TARGET_DIR})
-

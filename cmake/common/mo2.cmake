@@ -10,14 +10,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
 mo2_required_variable(NAME QT_ROOT TYPE PATH)
 mo2_required_variable(NAME CMAKE_INSTALL_PREFIX TYPE PATH)
 
-get_filename_component(MO2_BUILD_PATH "${CMAKE_CURRENT_LIST_DIR}/../.." REALPATH)
-get_filename_component(MO2_SUPER_PATH "${MO2_BUILD_PATH}/modorganizer_super" REALPATH)
-get_filename_component(MO2_UIBASE_PATH "${MO2_SUPER_PATH}/uibase" REALPATH)
-get_filename_component(MO2_INSTALL_PATH "${MO2_SUPER_PATH}/../../install" REALPATH)
-get_filename_component(MO2_INSTALL_LIBS_PATH "${MO2_INSTALL_PATH}/libs" REALPATH)
-
-list(APPEND CMAKE_PREFIX_PATH QT_ROOT}/lib/cmake)
-
 # find Qt major version and set QT_DEFAULT_MAJOR_VERSION to avoid issues
 # when including LinguistTools without a QtCore
 mo2_find_qt_version(QT_VERSION)

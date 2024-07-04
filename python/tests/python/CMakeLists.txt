@@ -6,11 +6,7 @@ find_package(GTest REQUIRED)
 
 set(PYLIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/pylibs)
 
-if (TARGET uibase)
-	set(UIBASE_PATH $<TARGET_FILE_DIR:uibase>)
-else()
-	set(UIBASE_PATH "${MO2_INSTALL_PATH}/bin")
-endif()
+set(UIBASE_PATH $<TARGET_FILE_DIR:uibase>)
 
 add_custom_target(python-tests)
 
@@ -21,7 +17,6 @@ add_test(NAME pytest
 set_tests_properties(pytest
 	PROPERTIES
 	DEPENDS python-tests
-	WORKING_DIRECTORY ${MO2_INSTALL_PATH}/bin
 	ENVIRONMENT_MODIFICATION
 	"PYTHONPATH=set:${PYLIB_DIR}\\;$<TARGET_FILE_DIR:mobase>;\
 UIBASE_PATH=set:${UIBASE_PATH};\
@@ -63,4 +58,3 @@ foreach (test_file ${test_files})
     	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../mocks)
 	add_dependencies(python-tests ${target})
 endforeach()
-

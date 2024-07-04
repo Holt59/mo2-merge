@@ -204,9 +204,9 @@ function(mo2_configure_tests TARGET)
 	# there is an open CMake issue: https://gitlab.kitware.com/cmake/cmake/-/issues/21453
 	#
 	# gtest_discover_tests(${TARGET}
-	# 	WORKING_DIRECTORY ${MO2_INSTALL_PATH}/bin
+	# 	WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
 	# 	PROPERTIES
-	# 	VS_DEBUGGER_WORKING_DIRECTORY ${MO2_INSTALL_PATH}/bin
+	# 	VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
 	# )
 	#
 

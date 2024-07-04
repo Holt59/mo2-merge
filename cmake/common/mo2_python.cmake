@@ -124,7 +124,7 @@ function(mo2_python_requirements TARGET)
 
 	install(
 		DIRECTORY "${MO2_LIBDIR}"
-		DESTINATION "${MO2_INSTALL_PATH}/bin/plugins/${TARGET}/"
+		DESTINATION "bin/plugins/${TARGET}/"
 		PATTERN "__pycache__" EXCLUDE
 	)
 
@@ -179,7 +179,7 @@ function(mo2_configure_python_module TARGET)
 			FILES "${PROJECT_SOURCE_DIR}/plugin-requirements.txt")
 	endif()
 
-    set(install_dir "${MO2_INSTALL_PATH}/bin/plugins/${TARGET}")
+    set(install_dir "bin/plugins/${TARGET}")
 
 	# directories that go in bin/plugins/${name}
 	install(
@@ -239,7 +239,7 @@ function(mo2_configure_python_simple TARGET)
 		PREFIX data
 		FILES ${json_files})
 
-    set(install_dir "${MO2_INSTALL_PATH}/bin/plugins")
+    set(install_dir "bin/plugins")
 
 	# .py files directly in src/ go to plugins/
 	install(FILES ${py_files} DESTINATION ${install_dir})

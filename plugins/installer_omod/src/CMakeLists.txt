@@ -55,10 +55,9 @@ install(
 	"$<TARGET_FILE_DIR:${PROJECT_NAME}>/ICSharpCode.SharpZipLib.dll"
 	"$<TARGET_FILE_DIR:${PROJECT_NAME}>/System.Drawing.Common.dll"
 	"$<TARGET_FILE_DIR:${PROJECT_NAME}>/RtfPipe.dll"
-	DESTINATION "${MO2_INSTALL_PATH}/bin/plugins/installer_omod/"
+	DESTINATION "bin/plugins/installer_omod/"
 )
 install(
 	FILES "$<TARGET_PDB_FILE_DIR:${PROJECT_NAME}>/ICSharpCode.SharpZipLib.pdb"
 	DESTINATION pdb)
 # Other PDB files get downloaded by Visual Studio during debugging when https://symbols.nuget.org/download/symbols is in the symbol server list
-
