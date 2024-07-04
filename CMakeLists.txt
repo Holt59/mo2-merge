@@ -48,3 +48,5 @@ mo2_add_subdirectories(FOLDER plugins/preview GLOB plugins/preview_*)
 mo2_add_subdirectories(FOLDER tools GLOB tools/*)
 
 add_subdirectory(modorganizer)
+
+set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT organizer)

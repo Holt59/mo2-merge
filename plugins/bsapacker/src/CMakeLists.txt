@@ -10,3 +10,5 @@ target_link_libraries(bsa_packer PRIVATE Qt6::Concurrent libbsarch::libbsarch)
 target_include_directories(bsa_packer PRIVATE ${BEXT_DI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(bsa_packer PRIVATE BSAPACKER_LIBRARY)
 mo2_install_target(bsa_packer)
+
+install(FILES $<TARGET_FILE:libbsarch::libbsarch> DESTINATION bin/dlls)

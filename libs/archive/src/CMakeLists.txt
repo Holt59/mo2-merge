@@ -7,3 +7,5 @@ mo2_configure_library(archive WARNINGS OFF)
 target_link_libraries(archive PRIVATE 7zip::7zip)
 target_compile_definitions(archive PRIVATE -DMODORGANIZER_ARCHIVE_BUILDING)
 mo2_install_target(archive)
+
+install(FILES $<TARGET_FILE:7zip::7zip> DESTINATION bin/dlls)

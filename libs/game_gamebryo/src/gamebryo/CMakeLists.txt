@@ -10,3 +10,5 @@ target_link_libraries(game_gamebryo
 	PRIVATE ZLIB::ZLIB lz4::lz4
 )
 mo2_install_target(game_gamebryo)
+
+install(FILES $<TARGET_FILE:lz4::lz4> DESTINATION bin/dlls)

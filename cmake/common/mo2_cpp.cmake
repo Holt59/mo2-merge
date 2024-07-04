@@ -181,14 +181,6 @@ function(mo2_configure_target TARGET)
 	set_target_properties(${TARGET} PROPERTIES VS_STARTUP_PROJECT ${TARGET})
 
 	target_link_libraries(${TARGET} PRIVATE Version Dbghelp)
-
-	# set the VS startup project if not already set
-	get_property(startup_project DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT)
-
-	if (NOT startup_project)
-		set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET})
-	endif()
-
 endfunction()
 
 #! mo2_configure_tests : configure a target as a MO2 C++ tests
