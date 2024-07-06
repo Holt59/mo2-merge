@@ -33,16 +33,24 @@ mo2_add_translations(proxy
 # install DLLs files needed
 set(DLL_DIRS ${PLUGIN_PYTHON_DIR}/dlls)
 file(GLOB dlls_to_install
-	${PYTHON_BUILD_PATH}/libffi*.dll
-	${PYTHON_BUILD_PATH}/python${Python_VERSION_SHORT}*.dll)
+	# ${PYTHON_BUILD_PATH}/libffi*.dll
+	${Python_HOME}/python${Python_VERSION_SHORT}*.dll)
 install(FILES ${dlls_to_install} DESTINATION ${DLL_DIRS})
 
-# install Python files
+# install Python .pyd files
 set(PYLIB_DIR ${PLUGIN_PYTHON_DIR}/libs)
-file(GLOB libs_to_install ${PYTHON_BUILD_PATH}/pythoncore/*.pyd)
+file(GLOB libs_to_install ${Python_DLL_DIR}/*.pyd)
 install(FILES ${libs_to_install} DESTINATION ${PYLIB_DIR})
-install(FILES ${PYTHON_BUILD_PATH}/pythoncore/python${Python_VERSION_SHORT}.zip
-    DESTINATION ${PYLIB_DIR} RENAME pythoncore.zip)
+
+# generate + install standard library
+set(pythoncore_zip "${CMAKE_CURRENT_BINARY_DIR}\\pythoncore.zip")
+add_custom_command(
+    TARGET proxy POST_BUILD
+    COMMAND ${Python_EXECUTABLE}
+        "${CMAKE_CURRENT_SOURCE_DIR}\\build_pythoncore.py"
+        ${pythoncore_zip}
+    )
+install(FILES ${pythoncore_zip} DESTINATION ${PYLIB_DIR})
 
 # install mobase
 install(TARGETS mobase DESTINATION ${PYLIB_DIR})
