@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/common/mo2.cmake)
 
-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_LIST_DIR}/usvfs/install/lib/cmake)
-
 function (mo2_add_subdirectories)
 	cmake_parse_arguments(MO2 "" "FOLDER" "GLOB" ${ARGN})
 
@@ -23,6 +21,7 @@ function (mo2_add_subdirectories)
     unset(CMAKE_FOLDER)
 
 endfunction()
+
 
 project(modorganizer2)
 
@@ -45,6 +44,7 @@ mo2_add_subdirectories(FOLDER plugins/preview GLOB plugins/preview_*)
 
 mo2_add_subdirectories(FOLDER tools GLOB tools/*)
 
+add_subdirectory(usvfs)
 add_subdirectory(modorganizer)
 
 set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT organizer)

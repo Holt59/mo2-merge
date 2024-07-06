@@ -49,5 +49,11 @@
       "name": "tomlplusplus",
       "version": "3.1.0"
     }
-  ]
+  ],
+  "features": {
+    "testing": {
+      "description": "Build USVFS tests.",
+      "dependencies": ["gtest"]
+    }
+  }
 }
