@@ -28,6 +28,9 @@ project(modorganizer2)
 
 set(USE_FOLDERS TRUE)
 
+# see https://gitlab.kitware.com/cmake/cmake/-/issues/20646
+set(CMAKE_VS_NUGET_PACKAGE_RESTORE TRUE)
+
 add_subdirectory(uibase)
 
 mo2_add_subdirectories(FOLDER python GLOB python)

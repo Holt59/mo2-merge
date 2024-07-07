@@ -18,6 +18,16 @@
 <context>
     <name>QObject</name>
     <message>
+        <location filename="ArchiveAutoService.cpp" line="12"/>
+        <source>Writing Archive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ArchiveAutoService.cpp" line="15"/>
+        <source>Writing %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="BsaPackerWorker.cpp" line="43"/>
         <source>Created</source>
         <translation type="unfinished"></translation>
@@ -70,16 +80,6 @@
     <message>
         <location filename="SettingsService.cpp" line="15"/>
         <source>Compress archives if they do not contain incompressible files.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ArchiveAutoService.cpp" line="12"/>
-        <source>Writing Archive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ArchiveAutoService.cpp" line="15"/>
-        <source>Writing %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

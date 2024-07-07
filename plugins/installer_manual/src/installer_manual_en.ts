@@ -73,11 +73,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="installdialog.cpp" line="138"/>
-        <source>Enter a directory name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="installdialog.cpp" line="100"/>
         <source>Cannot check the content of &lt;%1&gt;.</source>
         <translation type="unfinished"></translation>
@@ -110,6 +105,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="installdialog.cpp" line="130"/>
         <source>Cannot create directory under a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="installdialog.cpp" line="138"/>
+        <source>Enter a directory name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
