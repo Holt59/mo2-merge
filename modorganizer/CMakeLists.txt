@@ -26,7 +26,7 @@ FILES
     # Libs
     $<TARGET_LINKER_FILE:usvfs_x86::usvfs_dll>
     $<TARGET_LINKER_FILE:usvfs_x64::usvfs_dll>
-DESTINATION lib)
+DESTINATION libs)
 
 install(
 FILES
