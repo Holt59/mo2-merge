@@ -32,4 +32,9 @@ mo2_add_subdirectories(FOLDER tools GLOB tools/*)
 
 add_subdirectory(modorganizer)
 
+# extras stuff
+add_subdirectory(extras/explorer++)
+add_subdirectory(extras/licenses)
+add_subdirectory(extras/stylesheets)
+
 set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT organizer)
