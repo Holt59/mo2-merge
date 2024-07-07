@@ -12,7 +12,7 @@
         },
         "CMAKE_INSTALL_PREFIX": {
           "type": "PATH",
-          "value": "install"
+          "value": "${sourceDir}/install"
         }
       },
       "errors": {
