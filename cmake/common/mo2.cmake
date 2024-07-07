@@ -4,7 +4,7 @@ if (DEFINED MO2_INCLUDED)
 	return()
 endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 6.7.0 REQUIRED COMPONENTS Core)
 
 # version-major independent variables
 set(Qt_VERSION ${Qt6_VERSION})
