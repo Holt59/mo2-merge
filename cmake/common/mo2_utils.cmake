@@ -18,6 +18,32 @@ function (mo2_set_if_not_defined NAME VALUE)
 	endif()
 endfunction()
 
+
+#! mo2_add_subdirectories : add all repositories matching the given list of patterns
+#
+# \param:FOLDER Folder (layout) to add the subdirectories to
+# \param:GLOB List of glob patterns to find repositories
+#
+function (mo2_add_subdirectories)
+	cmake_parse_arguments(MO2 "" "FOLDER" "GLOB" ${ARGN})
+
+    if (NOT DEFINED MO2_FOLDER)
+        message(FATAL_ERROR  "missing FOLDER in add_subdirectories")
+    endif()
+    if (NOT DEFINED MO2_GLOB)
+        message(FATAL_ERROR  "missing GLOB in add_subdirectories")
+    endif()
+
+    file(GLOB directories RELATIVE ${CMAKE_CURRENT_LIST_DIR} LIST_DIRECTORIES TRUE ${MO2_GLOB})
+
+    set(CMAKE_FOLDER ${MO2_FOLDER})
+    foreach(directory ${directories})
+        add_subdirectory(${directory})
+    endforeach()
+    unset(CMAKE_FOLDER)
+
+endfunction()
+
 #! mo2_find_python_executable : find the full path to the Python executable
 #
 # \param:VARNAME name of the variable that will contain the path to Python
@@ -26,13 +52,21 @@ function(mo2_find_python_executable VARNAME)
 	set(${VARNAME} ${Python_EXECUTABLE} PARENT_SCOPE)
 endfunction()
 
-#! mo2_find_windeployqt_executable : find the full path to the windeployqt executable
+#! mo2_find_qt_executable : find the path to the executable from Qt
 #
-# \param:VARNAME name of the variable that will contain the path to Python
-function(mo2_find_windeployqt_executable VARNAME)
-	# find_program() does not work for whatever reason, just going for the whole
-	# name
-	set(${VARNAME} ${QT_ROOT}/bin/windeployqt.exe PARENT_SCOPE)
+function(mo2_find_qt_executable VARNAME EXECUTABLE)
+	# retrieve the absolute path to qmake and then use that path to find
+	# the windeployqt and macdeployqt binaries
+	get_target_property(_qmake_executable Qt6::qmake IMPORTED_LOCATION)
+	get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+
+	# need to use a custom varname per executable to use the cache
+	find_program(QT_${EXECUTABLE} ${EXECUTABLE} HINTS "${_qt_bin_dir}")
+	if(WIN32 AND NOT QT_${EXECUTABLE})
+		message(FATAL_ERROR "${EXECUTABLE} not found")
+	endif()
+
+	set(${VARNAME} ${QT_${EXECUTABLE}} PARENT_SCOPE)
 endfunction()
 
 #! mo2_set_project_to_run_from_install : set a target to run from a given executable
@@ -98,27 +132,6 @@ function(mo2_add_filter)
 	source_group(${filter_name} FILES ${files})
 endfunction()
 
-#! mo2_find_qt_version : try to deduce Qt version from QT_ROOT variable
-#
-# this function caches the given variable
-#
-# \param:VAR name of the variable to store the version into
-#
-function(mo2_find_qt_version VAR)
-
-	if (DEFINED CACHE{${VAR}})
-		return()
-	endif()
-
-	# TODO: deduce version from the QT_ROOT folder
-	get_filename_component(VFOLDER ${QT_ROOT} DIRECTORY)
-	get_filename_component(${VAR} ${VFOLDER} NAME)
-
-	message(STATUS "deduced Qt version to ${${VAR}}")
-
-	set(${VAR} ${${VAR}} CACHE STRING "Qt Version}")
-endfunction()
-
 #! mo2_deploy_qt_for_tests : add comments to deploy Qt for tests
 #
 # unlike mo2_deploy_qt(), this function does not perform any cleaning
@@ -157,7 +170,7 @@ endfunction()
 function(mo2_deploy_qt)
 	cmake_parse_arguments(DEPLOY "NOPLUGINS" "" "BINARIES" ${ARGN})
 
-	mo2_find_windeployqt_executable(windeployqt)
+	mo2_find_qt_executable(windeployqt windeployqt)
 
 	set(args
 		"--no-translations \
@@ -284,12 +297,12 @@ function(mo2_add_lupdate TARGET)
 	message(TRACE "TS_FILE: ${MO2_TS_FILE}, SOURCES: ${MO2_SOURCES}, FILES: ${translation_files}")
 
 	if (${is_cpp})
-		set(lupdate_command ${QT_ROOT}/bin/lupdate)
+		mo2_find_qt_executable(lupdate_command lupdate)
 		set(lupdate_args ${MO2_SOURCES} -ts ${MO2_TS_FILE})
 	else()
 		mo2_find_python_executable(PYTHON_EXE)
 		set(lupdate_command ${PYTHON_EXE})
-		set(lupdate_args -I -m PyQt${QT_MAJOR_VERSION}.lupdate.pylupdate --ts "${MO2_TS_FILE}" ${translation_files})
+		set(lupdate_args -I -m PyQt${Qt_VERSION_MAJOR}.lupdate.pylupdate --ts "${MO2_TS_FILE}" ${translation_files})
 	endif()
 
 	add_custom_command(OUTPUT ${MO2_TS_FILE}
@@ -322,8 +335,10 @@ endfunction()
 function(mo2_add_lrelease TARGET)
 	cmake_parse_arguments(MO2 "INSTALL" "QM_FILE" "TS_FILES" ${ARGN})
 
+	mo2_find_qt_executable(lrelease_command lrelease)
+
 	add_custom_command(OUTPUT ${MO2_QM_FILE}
-		COMMAND ${QT_ROOT}/bin/lrelease
+		COMMAND ${lrelease_command}
 		ARGS ${MO2_TS_FILES} -qm ${MO2_QM_FILE}
 		DEPENDS "${MO2_TS_FILES}"
 		VERBATIM)

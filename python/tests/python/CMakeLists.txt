@@ -26,8 +26,8 @@ QT_ROOT=set:${QT_ROOT}"
 mo2_python_pip_install(python-tests
 	DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pylibs
 	PACKAGES pytest
-		PyQt${QT_MAJOR_VERSION}==${QT_VERSION}
-		PyQt${QT_MAJOR_VERSION}-Qt${QT_MAJOR_VERSION}==${QT_VERSION})
+		PyQt${Qt_VERSION_MAJOR}==${Qt_VERSION}
+		PyQt${Qt_VERSION_MAJOR}-Qt${Qt_VERSION_MAJOR}==${Qt_VERSION})
 add_dependencies(python-tests mobase)
 set_target_properties(python-tests PROPERTIES FOLDER tests/python)
 

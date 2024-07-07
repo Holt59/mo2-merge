@@ -4,20 +4,16 @@ if (DEFINED MO2_INCLUDED)
 	return()
 endif()
 
+find_package(Qt6 REQUIRED COMPONENTS Core)
+
+# version-major independent variables
+set(Qt_VERSION ${Qt6_VERSION})
+set(Qt_VERSION_MAJOR ${Qt6_VERSION_MAJOR})
+
 include(${CMAKE_CURRENT_LIST_DIR}/mo2_utils.cmake)
 
 # setup path for find_package(), etc.
-mo2_required_variable(NAME QT_ROOT TYPE PATH)
 mo2_required_variable(NAME CMAKE_INSTALL_PREFIX TYPE PATH)
-
-# find Qt major version and set QT_DEFAULT_MAJOR_VERSION to avoid issues
-# when including LinguistTools without a QtCore
-mo2_find_qt_version(QT_VERSION)
-string(REPLACE "." ";" QT_VERSION_LIST ${QT_VERSION})
-list(GET QT_VERSION_LIST 0 QT_MAJOR_VERSION)
-
-# we add the Qt DLL to the paths for some tools
-set(ENV{PATH} "${QT_ROOT}/bin;$ENV{PATH}")
 
 # custom property, used to keep track of the type of target
 define_property(
@@ -25,8 +21,9 @@ define_property(
 	BRIEF_DOCS  "Target type for MO2 C++ target."
 	FULL_DOCS "Automatically set when using mo2_configure_XXX functions.")
 
-set(Boost_USE_STATIC_RUNTIME OFF)
-set(Boost_USE_STATIC_LIBS ON)
+# to be able to organize projects into folder for VS
+set(USE_FOLDERS TRUE)
+
 set(CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD 1)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

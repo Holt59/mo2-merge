@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets WebSockets)
 find_package(Boost REQUIRED COMPONENTS program_options signals2 uuid accumulators)
 find_package(usvfs REQUIRED)
 

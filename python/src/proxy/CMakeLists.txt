@@ -43,7 +43,7 @@ file(GLOB libs_to_install ${Python_DLL_DIR}/*.pyd)
 install(FILES ${libs_to_install} DESTINATION ${PYLIB_DIR})
 
 # generate + install standard library
-set(pythoncore_zip "${CMAKE_CURRENT_BINARY_DIR}\\pythoncore.zip")
+set(pythoncore_zip "${CMAKE_CURRENT_BINARY_DIR}/pythoncore.zip")
 add_custom_command(
     TARGET proxy POST_BUILD
     COMMAND ${Python_EXECUTABLE}
@@ -56,7 +56,7 @@ install(FILES ${pythoncore_zip} DESTINATION ${PYLIB_DIR})
 install(TARGETS mobase DESTINATION ${PYLIB_DIR})
 
 # install PyQt6
-set(PYQT_LIB_DIR ${CMAKE_BINARY_DIR}/pylibs/PyQt${QT_MAJOR_VERSION})
-set(PYQT_TARGET_DIR ${PYLIB_DIR}/PyQt${QT_MAJOR_VERSION})
+set(PYQT_LIB_DIR ${CMAKE_BINARY_DIR}/pylibs/PyQt${Qt_VERSION_MAJOR})
+set(PYQT_TARGET_DIR ${PYLIB_DIR}/PyQt${Qt_VERSION_MAJOR})
 file(GLOB pyqt_files ${PYQT_LIB_DIR}/*.py ${PYQT_LIB_DIR}/*.pyd ${PYQT_LIB_DIR}/*.pyi)
 install(FILES ${pyqt_files} DESTINATION ${PYQT_TARGET_DIR})

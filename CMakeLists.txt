@@ -1,35 +1,17 @@
 cmake_minimum_required(VERSION 3.23)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/common/mo2.cmake)
-
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_LIST_DIR}/usvfs/install/lib/cmake)
 
-function (mo2_add_subdirectories)
-	cmake_parse_arguments(MO2 "" "FOLDER" "GLOB" ${ARGN})
+project(modorganizer2 CXX)
 
-    if (NOT DEFINED MO2_FOLDER)
-        message(FATAL_ERROR  "missing FOLDER in add_subdirectories")
-    endif()
-    if (NOT DEFINED MO2_GLOB)
-        message(FATAL_ERROR  "missing GLOB in add_subdirectories")
-    endif()
+# include after project() otherwise find_package(Qt6) will fail
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/common/mo2.cmake)
 
-    file(GLOB directories RELATIVE ${CMAKE_CURRENT_LIST_DIR} LIST_DIRECTORIES TRUE ${MO2_GLOB})
+# do this here for most components to speed-up configure time
+find_package(Qt6 6.7.0 COMPONENTS
+    Concurrent Core Network Qml Quick QuickWidgets WebEngineWidgets WebSockets Widgets)
 
-    set(CMAKE_FOLDER ${MO2_FOLDER})
-    foreach(directory ${directories})
-        add_subdirectory(${directory})
-    endforeach()
-    unset(CMAKE_FOLDER)
-
-endfunction()
-
-project(modorganizer2)
-
-set(USE_FOLDERS TRUE)
-
-# see https://gitlab.kitware.com/cmake/cmake/-/issues/20646
-set(CMAKE_VS_NUGET_PACKAGE_RESTORE TRUE)
+# add the various directory
 
 add_subdirectory(uibase)
 

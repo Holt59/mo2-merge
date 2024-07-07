@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-find_package(Qt6 CONFIG REQUIRED COMPONENTS Concurrent)
 find_path(BEXT_DI_INCLUDE_DIRS "boost/di.hpp")
 find_package(libbsarch CONFIG REQUIRED)
 

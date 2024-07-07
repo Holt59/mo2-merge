@@ -27,8 +27,8 @@ mo2_python_pip_install(runner-tests
 	DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pylibs
   PACKAGES
     pytest
-		PyQt${QT_MAJOR_VERSION}==${QT_VERSION}
-		PyQt${QT_MAJOR_VERSION}-Qt${QT_MAJOR_VERSION}==${QT_VERSION})
+		PyQt${Qt_VERSION_MAJOR}==${Qt_VERSION}
+		PyQt${Qt_VERSION_MAJOR}-Qt${Qt_VERSION_MAJOR}==${Qt_VERSION})
 
 add_dependencies(runner-tests mobase)
 
@@ -40,4 +40,3 @@ set_tests_properties(${runner-tests_gtests}
     PROPERTIES
     ENVIRONMENT "PLUGIN_DIR=${CMAKE_CURRENT_SOURCE_DIR}/plugins;PYTHONPATH=${PYTHONPATH}"
 )
-

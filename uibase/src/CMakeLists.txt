@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-find_package(Qt6 COMPONENTS Widgets Network QuickWidgets Qml Quick)
 find_package(spdlog CONFIG REQUIRED)
 find_package(Boost REQUIRED CONFIG COMPONENTS thread)
 

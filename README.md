@@ -43,7 +43,7 @@
 # if CMake fails to find the right Python, you can set -DPython_ROOT_DIR with the path
 # to your Python installation
 #
-cmake --preset vs2022-windows "-DCMAKE_INSTALL_PREFIX=..\install" "-DQT_ROOT=C:\Qt\6.7.0\msvc2019_64\"
+cmake --preset vs2022-windows "-DCMAKE_INSTALL_PREFIX=.\install" "-DCMAKE_PREFIX_PATH=C:\Qt\6.7.0\msvc2019_64"
 
 # build and install MO2
 cmake --build vsbuild --config RelWithDebInfo --target INSTALL

@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-find_package(Qt6 COMPONENTS Widgets)
-
 mo2_find_python_executable(PYTHON_EXE)
 
 add_library(pybind11-qt STATIC)
@@ -25,7 +23,7 @@ add_custom_command(
 	COMMAND
 		${CMAKE_COMMAND} -E env PYTHONPATH=${CMAKE_BINARY_DIR}/pylibs
 		${CMAKE_BINARY_DIR}/pylibs/bin/sip-module.exe
-		--sip-h PyQt${QT_MAJOR_VERSION}.sip
+		--sip-h PyQt${Qt_VERSION_MAJOR}.sip
 		--target-dir ${CMAKE_CURRENT_BINARY_DIR}
 )
 target_sources(pybind11-qt PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/sip.h")

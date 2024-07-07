@@ -7,4 +7,3 @@ set(CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION "v4.8")
 project(installer_omod LANGUAGES CXX CSharp)
 
 add_subdirectory(src)
-

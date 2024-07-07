@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 find_package(tomlplusplus CONFIG REQUIRED)
 find_package(libloot CONFIG REQUIRED)
-
+set_target_properties(libloot::loot PROPERTIES
+  MAP_IMPORTED_CONFIG_MINSIZEREL RelWithDebInfo
+)
 find_package(Boost REQUIRED CONFIG COMPONENTS locale)
-find_package(Qt6 REQUIRED)
 
 add_executable(lootcli WIN32)
 

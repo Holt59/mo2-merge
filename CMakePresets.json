@@ -1,6 +1,16 @@
 {
   "configurePresets": [
     {
+      "cacheVariables": {
+        "CMAKE_VS_NUGET_PACKAGE_RESTORE": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "INSTALL_REQUIRES_VS_PACKAGE_RESTORE": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      },
       "errors": {
         "deprecated": true
       },
@@ -55,8 +65,9 @@
   "buildPresets": [
     {
       "name": "vs2022-windows",
+      "resolvePackageReferences": "on",
       "configurePreset": "vs2022-windows"
     }
   ],
-  "version": 3
+  "version": 4
 }
