@@ -1,12 +1,6 @@
 {
   "configurePresets": [
     {
-      "cacheVariables": {
-        "BUILD_TESTING": {
-          "type": "BOOL",
-          "value": "ON"
-        }
-      },
       "errors": {
         "deprecated": true
       },
@@ -54,7 +48,6 @@
       },
       "generator": "Visual Studio 17 2022",
       "inherits": ["cmake-dev", "vcpkg-dev"],
-      "hidden": true,
       "name": "vs2022-windows",
       "toolset": "v143"
     }

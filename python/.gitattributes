@@ -6,3 +6,4 @@
 *.cpp text eol=crlf
 *.h text eol=crlf
 *.py text eol=crlf
+*.ts text eol=crlf
